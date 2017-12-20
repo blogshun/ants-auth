@@ -1,0 +1,250 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<!-- 工具栏 -->
+<div class="mini-toolbar">
+    <table>
+        <tr>
+            <td style="width:100%;">
+                <a id="add" class="mini-button" iconCls="icon-user-add">增加</a>
+                <a id="edit" class="mini-button" iconCls="icon-user-edit">编辑</a>
+                <a id="remove" class="mini-button" iconCls="icon-user-delete">删除</a>
+                <span class="separator"></span>
+                <a class="btn-default btn_see" xtype="1" data-placement="bottomleft"><i class="sc_icon sc_icon_see"></i>查看角色</a>
+                <a class="btn-default btn_edit" xtype="2" data-placement="bottomleft"><i class="icon icon-edit"></i>查看组织</a></a>
+            </td>
+            <td style="white-space:nowrap;">
+                类型 <input id="type" class="mini-combobox w120" showNullItem="true" emptyText="选择类型" valueField="val"
+                          textField="name" url="${ctx}/dict/code?id=YHLX&_refresh"/>
+                条件 <input id="tj" class="mini-combobox w100" showNullItem="true" emptyText="选择条件" valueField="val"
+                          textField="name" url="${ctx}/dict/code?id=YHTJ&_refresh"/>
+                <input id="key" class="mini-textbox w200" emptyText="请输入关键字"/>
+                <a id="search" class="mini-button" iconCls="icon-search" style="margin-right:0;">查询</a>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<!-- 数据列表 -->
+<div id="userGrid" class="mini-datagrid" style="width:100%;"
+     url="${ctx}/user/page" idField="id" multiSelect="true" pageSize="15"
+>
+    <div property="columns">
+        <div type="checkcolumn"></div>
+        <div field="avatar" width="40" renderer="r.renderAvatar">头像</div>
+        <div field="account">账号</div>
+        <div field="userName" width="70">昵称</div>
+        <div field="sex" width="40" align="center" headerAlign="center" renderer="r.renderSex">性别</div>
+        <div field="userType" type="comboboxcolumn" width="80">类型
+            <input property="editor" class="mini-combobox" url="${ctx}/dict/code?id=YHLX&_refresh" valueField="val"
+                   textField="name"/>
+        </div>
+        <div field="position" width="80">职位</div>
+        <div field="phone" width="90">电话</div>
+        <div field="email">邮箱</div>
+        <div field="loginCount" width="60">登录次数</div>
+        <div field="isLock" width="50" renderer="r.renderIsLock">状态</div>
+        <div field="loginIp" width="115">上次登录IP</div>
+        <div field="lastLoginTime" width="115">上次登录时间</div>
+        <div width="70" renderer="r.renderTime">[更新信息]</div>
+    </div>
+</div>
+
+<!-- 数据添加与修改窗口, 默认隐藏 -->
+<div id="userWindow" class="mini-window" style="width:420px;"
+     showModal="true" allowDrag="true" iconCls="icon-user-add"
+>
+    <div id="userForm" class="form">
+        <input class="mini-hidden" name="id"/>
+        <input id="avatar" class="mini-hidden" name="avatar"/>
+        <table class="tbp">
+            <tr>
+                <td colspan="2">
+                    <div style="float: left;">
+                        <p style="padding:5px 0;">账号 <input name="account" class="mini-textbox" style="width:180px;"
+                                                            required="true" emptyText="请输入账号" maxLength="30"/></p>
+                        <p style="padding:8px 0;">昵称 <input name="userName" class="mini-textbox" required="true"
+                                                            emptyText="请输入昵称" maxLength="30"/></p>
+                        <p style="padding-top:8px;">性别 <input id="sex" name="sex" required="true" emptyText="请选择性别"
+                                                              class="mini-combobox" data="[{id:'1', text:'男'},{id:'0', text:'女'}]"/></p>
+                    </div>
+                    <img src="${ctx}/upload/tx.png" class="user_tx xz"/>
+                    <form id="txFileForm" method="post" enctype="multipart/form-data" runat="server">
+                        <input name="txImg" id="user_tx" type="file" style="visibility:hidden;">
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td>类型 <input name="userType" required="true" emptyText="请选择类型" class="mini-combobox"
+                              url="${ctx}/dict/code?id=YHLX&_refresh" valueField="val" textField="name"/></td>
+                <td class="tar">职位 <input name="position" class="mini-textbox" emptyText="请输入职位"/></td>
+            </tr>
+            <tr>
+                <td>电话 <input id="phone" name="phone" required="true" emptyText="请输入电话" vtype="int"
+                              class="mini-textbox"/></td>
+                <td class="tar">邮箱 <input id="email" name="email" class="mini-textbox" vtype="email" required="true"
+                                          emptyText="请输入邮箱"/></td>
+            </tr>
+            <tr>
+                <td>角色 <input name="roles" class="mini-combobox" url="${ctx}/role/all" emptyText="选择角色" valueField="id"
+                              textField="roleName" multiSelect="true"/></td>
+                <td class="tar">组织 <input name="orgs" class="mini-treeselect" emptyText="选择所属组织" multiSelect="true"
+                                          expandOnLoad="0" url="${ctx}/org/all" value=""
+                                          showNullItem="true" textField="orgName" valueField="id" parentField="pid"/>
+                </td>
+            </tr>
+        </table>
+        <div class="footer-btn" style="text-align:right">
+            <a id="ok" class="mini-button" iconCls="icon-ok">确定</a>
+            <a id="cancel" class="mini-button" iconCls="icon-cancel">取消</a>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var init = function(){
+        mini.parse();
+        var grid = app.initTablePlugin({
+            id: 'user',
+            name: '用户',
+            addCls: 'icon-user-add',
+            editCls: 'icon-user-edit',
+            params: {sortField: "id", sortOrder: "desc"},
+            addApi: '${ctx}/user/save',
+            findApi: '${ctx}/user/find',
+            removeApi: '${ctx}/user/delete',
+            updateApi: '${ctx}/user/update',
+            showAddEvent: function (win, frm) {
+                $("img.user_tx").attr("src", "${ctx}/upload/tx.png");
+            },
+            showEditEvent: function (win, frm, res) {
+                $("img.user_tx").attr("src", "${ctx}/" + res.data.avatar);
+            },
+            onSearchEvent: function () {
+                var tjKey = mini.get("tj").getValue();
+                var keyVal = mini.get("key").getValue();
+                var type = mini.get("type").getValue();
+                if (tjKey == "" && keyVal == "" && type == "") return {};
+                return {filters: '{userType:"' + type + '"}', tjKey: tjKey, keyValue: keyVal};
+            }
+        });
+
+        var tip = new mini.ToolTip();
+        tip.set({
+            target: document,
+            selector: '[data-placement]',
+            onbeforeopen: function (e) {
+                e.cancel = false;
+            },
+            onopen: function (e) {
+                var type = $(e.element).attr("xtype");
+                if (type == 3) {
+                    var create_time = $(e.element).attr("create-time");
+                    var create_by = $(e.element).attr("create-by");
+                    var update_time = $(e.element).attr("update-time");
+                    var update_by = $(e.element).attr("update-by");
+                    this.showLoading();
+                    setTimeout(function () {
+                        var html = `<p style="text-align: left;">创建时间：<span  style="color:green;">` + create_time + `</span></p>
+                                <p style="text-align: left;">By：<span  style="color:green;">` + create_by + `</span></p>
+                        <p style="text-align: left;padding-top:5px;">修改时间：<span  style="color:red;">` + (update_time ? "" : update_time) + `</span></p>
+                        <p style="text-align: left;">By：<span  style="color:red;">` + update_by + `</span></p>
+                    `;
+                        tip.setContent(html);
+                    }, 500);
+                } else if (type == 1 || type == 2) {
+                    var row = grid.getSelecteds();
+                    if (row.length == 1) {
+                        this.showLoading();
+                        $.get("${ctx}/user/findRolesOrOrgs", {id: row[0].id, type: type}, function (res) {
+                            if (res.code == 0) {
+                                var html = "";
+                                $.each(res.data, function (i, obj) {
+                                    if (type == 1)
+                                        html += "<p style='padding-top:5px;'>" + obj.roleName + "</p>";
+                                    else if (type == 2)
+                                        html += "<p style='padding-top:5px;'>" + obj.orgName + "</p>";
+                                });
+                                tip.setContent(html);
+                            } else {
+                                tips.error(res.message);
+                            }
+                        });
+                    } else if (row.length > 1) {
+                        tip.setContent('<span style="color:red;">只能选择一记录</span>');
+                    } else {
+                        tip.setContent('<span style="color:red;">请选择一行记录</span>');
+                    }
+                }
+
+            }
+        });
+
+
+        $("img.user_tx").click(function () {
+            $("input#user_tx")[0].click();
+        });
+
+        $("input#user_tx").on("change", function () {
+            $("#txFileForm").ajaxSubmit({
+                type: "POST",
+                dataType: "json",
+                url: "${ctx}/user/uploadAvatar",
+                success: function (res) {
+                    if (res.code == 0) {
+                        $("img.user_tx").attr("src", "${ctx}/" + res.data);
+                        mini.get("avatar").setValue(res.data);
+                    } else
+                        tips.error(res.message);
+                },
+                async: true
+            });
+        });
+    }
+
+    var r = {
+        renderAvatar: function (e) {
+            return '<img src= "${ctx}/' + e.value + '" onerror="" class="avatar xz fl" />';
+        },
+        renderSex: function (e) {
+            if (e.value == 0)
+                return '<i class="mini-iconfont table-icon icon-female"></i>';
+            else if (e.value == 1)
+                return '<i class="mini-iconfont table-icon icon-male"></i>';
+        },
+        renderTime: function (e) {
+            var rec = e.record;
+            return `<a class="btn-default btn_edit" xtype="3" data-placement="left" create-time="` + rec.createTime + `"
+            update-time="` + rec.updateTime + `"
+             create-by="` + rec.createBy + `"
+              update-by="` + rec.updateBy + `"><i class="sc_icon sc_icon_see"></i>查看信息</a>`;
+        },
+        renderIsLock: function (e) {
+            var rec = e.record;
+            if (e.value == 0) {
+                return `<div class="switch active" onclick="OnSwitch('` + rec.id + `', 1, this);">
+                                            	<div class="circle"></div>
+                                            </div>`;
+            } else if (e.value == 1) {
+                return `<div class="switch " onclick="OnSwitch('` + rec.id + `', 0, this);">
+                                            	<div class="circle"></div>
+                                            </div>`;
+            }
+        }
+    }
+
+    var OnSwitch = function (id, type, e) {
+        $.post("${ctx}/user/checkLock", {id: id, lock: type}, function (res) {
+            if (res.code == 0) {
+                if (type == 0)
+                    tips.success("该账号状态修改成功, 已解锁!");
+                else if (type == 1)
+                    tips.success("该账号状态修改成功, 已锁定!");
+
+                if ($(e).hasClass("active")) {
+                    $(e).removeClass("active");
+                } else
+                    $(e).addClass("active");
+            } else {
+                tips.error(res.message);
+            }
+        });
+    }
+</script>

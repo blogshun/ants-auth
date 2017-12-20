@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>顶岗实习后台登录</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <link href="${ctx}/static/css/font-awesome.min.css" rel="stylesheet"/>
+    <link href="${ctx}/static/css/animate.min.css" rel="stylesheet"/>
+    <script type="text/javascript" src="${ctx}/static/js/jquery-1.9.1.min.js"></script>
+    <style type="text/css">
+        * {
+            padding: 0;
+            margin: 0;
+            font-family: "Microsoft YaHei";
+        }
+
+        body {
+            font-size: 13px;
+            background: #EEEEEE;
+        }
+
+        .login_box {
+            width: 280px;
+            height: 320px;
+            margin: 12% auto;
+            background: #ffffff;
+            box-shadow: 0 0 14px rgba(0, 0, 0, .1);
+        }
+
+        input.form-control {
+            width: 190px;
+            color: #858585;
+            padding: 6px 0 6px 30px;
+            background-color: #fbfbfb;
+            border: 1px solid #d5d5d5;
+            border-radius: 3px;
+            margin: 10px 50px 10px 30px;
+        }
+
+        .btn_box {
+            width: 220px;
+            margin: 20px auto 0 auto;
+        }
+
+        .btn {
+            background: #2A3F5D;
+            border: none;
+            width: 100%;
+            padding: 7px 0;
+            text-align: center;
+            color: #ffffff;
+            border-radius: 3px;
+        }
+
+        button.btn:hover {
+            opacity: .9;
+            cursor: pointer;
+        }
+
+        button.btn, input.form-control:focus {
+            outline: none !important;
+            border: 1px solid #2A3F5D;
+            outline-color: #2A3F5D;
+        }
+
+        .login_box .loginbox-or {
+            position: relative;
+            text-align: center;
+            height: 20px;
+        }
+
+        .login_box .or-line {
+            position: absolute;
+            height: 1px;
+            top: 10px;
+            left: 40px;
+            right: 40px;
+            background-color: #ccc;
+        }
+
+        .login_box .or {
+            position: absolute;
+            top: 0;
+            -lh-property: 0;
+            left: -webkit-calc(50% - 25px);
+            left: -moz-calc(50% - 25px);
+            left: calc(50% - 25px);
+            width: 50px;
+            height: 20px;
+            background-color: #fff;
+            color: #999;
+            margin: 0 auto;
+        }
+
+        .copyright {
+            text-align: center;
+            font-size: 10px;
+            padding-top: 20px;
+            color: #888888;
+        }
+
+        img.code {
+            float: left;
+            width: 80px;
+            margin-top: 10px;
+            height: 28px;
+            cursor: pointer;
+        }
+
+        div.login_box .owl-login {
+            width: 211px;
+            height: 108px;
+            background-image: url("${ctx}/static/images/tou.png");
+            position: absolute;
+            top: -100px;
+            left: 50%;
+            margin-left: -111px;
+        }
+
+        div.login_box .hand {
+            width: 34px;
+            height: 34px;
+            -webkit-border-radius: 40px;
+            border-radius: 40px;
+            background-color: #472d20;
+            -webkit-transform: scaleY(0.6);
+            -moz-transform: scaleY(0.6);
+            -o-transform: scaleY(0.6);
+            -ms-transform: scaleY(0.6);
+            transform: scaleY(0.6);
+            -webkit-transition: 0.3s ease-out;
+            -moz-transition: 0.3s ease-out;
+            -o-transition: 0.3s ease-out;
+            -ms-transition: 0.3s ease-out;
+            transition: 0.3s ease-out;
+            position: absolute;
+            left: 14px;
+            bottom: -8px;
+        }
+
+        div.owl-login.password .hand {
+            -webkit-transform: translateX(42px) translateY(-15px) scale(0.7);
+            -moz-transform: translateX(42px) translateY(-15px) scale(0.7);
+            -o-transform: translateX(42px) translateY(-15px) scale(0.7);
+            -ms-transform: translateX(42px) translateY(-15px) scale(0.7);
+            transform: translateX(42px) translateY(-15px) scale(0.7);
+        }
+
+        div.owl-login.password .hand.hand-r {
+            -webkit-transform: translateX(-42px) translateY(-15px) scale(0.7);
+            -moz-transform: translateX(-42px) translateY(-15px) scale(0.7);
+            -o-transform: translateX(-42px) translateY(-15px) scale(0.7);
+            -ms-transform: translateX(-42px) translateY(-15px) scale(0.7);
+            transform: translateX(-42px) translateY(-15px) scale(0.7);
+        }
+
+        div.owl-login.password .arm {
+            -webkit-transform: translateY(-40px) translateX(40px);
+            -moz-transform: translateY(-40px) translateX(40px);
+            -o-transform: translateY(-40px) translateX(40px);
+            -ms-transform: translateY(-40px) translateX(40px);
+            transform: translateY(-40px) translateX(40px);
+        }
+
+        div.owl-login.password .arm.arm-r {
+            -webkit-transform: translateY(-40px) translateX(-40px) scaleX(-1);
+            -moz-transform: translateY(-40px) translateX(-40px) scaleX(-1);
+            -o-transform: translateY(-40px) translateX(-40px) scaleX(-1);
+            -ms-transform: translateY(-40px) translateX(-40px) scaleX(-1);
+            transform: translateY(-40px) translateX(-40px) scaleX(-1);
+        }
+
+        div.login_box .hand.hand-r {
+            left: 170px;
+        }
+
+        div.login_box .arms {
+            top: 58px;
+            position: absolute;
+            width: 100%;
+            height: 41px;
+            overflow: hidden;
+        }
+
+        div.login_box .arm {
+            width: 40px;
+            height: 65px;
+            position: absolute;
+            left: 20px;
+            top: 40px;
+            background-image: url("${ctx}/static/images/owl-login-arm.png");
+            -webkit-transition: 0.3s ease-out;
+            -moz-transition: 0.3s ease-out;
+            -o-transition: 0.3s ease-out;
+            -ms-transition: 0.3s ease-out;
+            transition: 0.3s ease-out;
+            -webkit-transform: rotate(-20deg);
+            -moz-transform: rotate(-20deg);
+            -o-transform: rotate(-20deg);
+            -ms-transform: rotate(-20deg);
+            transform: rotate(-20deg);
+        }
+
+        div.login_box .arm.arm-r {
+            -webkit-transform: rotate(20deg) scaleX(-1);
+            -moz-transform: rotate(20deg) scaleX(-1);
+            -o-transform: rotate(20deg) scaleX(-1);
+            -ms-transform: rotate(20deg) scaleX(-1);
+            transform: rotate(20deg) scaleX(-1);
+            left: 158px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 0px;
+            height: 0px;
+        }
+
+        .tips-box {
+            position: fixed;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .login-tips {
+            width: 260px;
+            margin: 0 auto;
+            cursor: default;
+            padding: 5px 10px 5px 8px;
+            border-radius: 2px;
+            font-size: 12px;
+            color: #b94a48;
+            background-color: #f2dede;
+            border-color: #eed3d7;
+        }
+    </style>
+</head>
+<body>
+<div class="login_box animated fadeInDown">
+    <div class="owl-login">
+        <div class="hand"></div>
+        <div class="hand hand-r"></div>
+        <div class="arms">
+            <div class="arm"></div>
+            <div class="arm arm-r"></div>
+        </div>
+    </div>
+    <div style="width:90%;margin: 0 auto;padding-top: 10px;">
+        <img src="${ctx}/static/images/login-logo.png" style="width:100%;"/>
+    </div>
+    <div class="loginbox-or">
+        <div class="or-line"></div>
+        <div class="or">Ants</div>
+    </div>
+    <div style="position: relative;">
+        <i class="fa fa-lg fa-user-circle" style="position: absolute;left:38px;top:18px;"></i>
+        <input id="username" type="text" class="form-control" placeholder="Account" maxlength="20">
+    </div>
+    <div style="position: relative;">
+        <i class="fa fa-key" style="position: absolute;left:38px;top:18px;font-size:1.1em"></i>
+        <input id="password" type="password" class="form-control" placeholder="Password" maxlength="20">
+    </div>
+    <div style="position: relative;margin-top:-10px;">
+        <i class="fa fa-heart-o" aria-hidden="true" style="position: absolute;left:38px;top:20px;"></i>
+        <input id="code" type="text" class="form-control" style="width:70px;float:left;margin-right:18px;"
+               maxlength="4">
+        <img src="${ctx}/sys/code.png" class="code"/>
+    </div>
+    <div class="btn_box">
+        <button class="btn btn-primary btn-block">登 录</button>
+    </div>
+    <div class="copyright">Copyright © Ants 框架 by 权限开源</div>
+</div>
+</body>
+<script type="text/javascript">
+    $(function () {
+        //切换验证码
+        $("img.code").click(function (res) {
+            $(this).attr("src", "${ctx}/sys/code.png?t=" + new Date().getTime());
+        });
+
+        //猫头鹰特效
+        $('input#password').focus(function () {
+            $('div.owl-login').addClass('password');
+        }).blur(function () {
+            $('div.owl-login').removeClass('password');
+        });
+
+        //提示效果
+        var loginTips = function (text, time) {
+            $("body").append(`<div class="tips-box"><div class="login-tips">
+                <i class="fa fa-close"></i> ` + text + `
+            </div></div>`);
+            $(".tips-box").animate({top: "20px", opacity: "1"});
+            setTimeout(function () {
+                $("div.tips-box").remove();
+            }, time);
+        }
+        //登录效果
+        var hideAnimBtn = function (hide) {
+            var that = $("button.btn");
+            if (hide) {
+                that.html('登 录');
+                that.removeAttr("disabled");
+                that.css("opacity", "1");
+            } else {
+                that.html('<i class="fa fa-spinner fa-pulse fa-fw"></i> 正在登录中');
+                that.attr("disabled", "disabled");
+                that.css("opacity", ".2");
+            }
+        }
+
+        var login = function(){
+            var username = $("input#username").val();
+            var password = $("input#password").val();
+            var code = $("input#code").val();
+            if ($.trim(username).length == 0) {
+                loginTips("请输入用户账号!", 3000);
+            } else if (!/^[0-9a-zA-z-_]+$/.test(username)) {
+                loginTips("错误, 账号只能由字母,数字,减号,下划线组成!", 5000);
+            } else if ($.trim(password).length == 0) {
+                loginTips("请输入用户密码!", 3000);
+            } else if ($.trim(code).length == 0) {
+                loginTips("请输入验证码!", 3000);
+            } else if (!/^([a-z]|[A-Z]|[0-9]){4}$/.test(code)) {
+                loginTips("格式错误, 验证码只能是4位数字或字母组成!", 5000);
+            } else {
+                hideAnimBtn(false);
+                $.post("${ctx}/sys/login", {username: username, password: password, code: code}, function (res) {
+                    if (res.code == 0) {
+                        location.href = "${ctx}/admin/index.jsp";
+                    } else {
+                        setTimeout(function () {
+                            $("img.code").attr("src", "${ctx}/sys/code.png?t=" + new Date().getTime());
+                            loginTips(res.message, 3000);
+                            hideAnimBtn(true);
+                        }, 1000);
+                    }
+                });
+            }
+        }
+
+        //点击按钮登录
+        $("button.btn").click(function () {
+            login();
+        });
+
+        //回车键登录
+        $("input#code").keydown(function(e){
+            if(e.keyCode==13){
+                login();
+            }
+        });
+    });
+</script>
+</html>

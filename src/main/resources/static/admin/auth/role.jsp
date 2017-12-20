@@ -1,0 +1,160 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<style type="text/css">
+    .mini-splitter-pane2 {
+        border-left: none;
+    }
+
+    .mini-splitter-pane1 {
+        border-right: none;
+    }
+</style>
+<div class="mini-splitter" style="width:100%;height:620px;">
+    <div size="500" showCollapseButton="false" minSize="500">
+        <div class="mini-toolbar">
+            <table>
+                <tr>
+                    <td style="width:100%;">
+                        <a id="add" class="mini-button" iconCls="icon-role-add">增加</a>
+                        <a id="edit" class="mini-button" iconCls="icon-role-edit">编辑</a>
+                        <a id="remove" class="mini-button" iconCls="icon-role-delete">删除</a>
+
+                    </td>
+                    <td style="white-space:nowrap;">
+                        <a id="allo" class="mini-button" iconCls="icon-role-set">设置</a>
+                    </td>
+                    <%--<td style="white-space:nowrap;">--%>
+                    <%--<input id="key" class="mini-textbox w200" emptyText="请输入角色名称" onenter="onKeyEnter"/>--%>
+                    <%--<a class="mini-button" iconCls="icon-search">查询</a>--%>
+                    <%--</td>--%>
+                </tr>
+            </table>
+        </div>
+        <div id="roleGrid" class="mini-datagrid" style="height: 580px;"
+             url="${ctx}/role/page" idField="id" multiSelect="true"
+             onrowclick="OnRowClick" allowUnselect="true"
+        >
+            <div property="columns">
+                <div field="id" width="20" align="center" headerAlign="center">ID</div>
+                <div type="checkcolumn" width="20"></div>
+                <div field="roleName" width="50">角色名称</div>
+                <div field="remark">角色备注</div>
+            </div>
+        </div>
+
+    </div>
+    <div showCollapseButton="false">
+        <!-- 资源列表 -->
+        <div id="resGrid" title="资源列表" showHeader="true" class="mini-treegrid small-size" style="height:100%;"
+             url="${ctx}/res/list" showTreeIcon="true" resultAsTree="false" expandOnNodeClick="true"
+             treeColumn="resName" idField="id" parentField="pid" showCheckBox="true"
+        >
+            <div property="columns">
+                <div field="id" width="30" align="center" headerAlign="center">ID</div>
+                <div name="resName" field="resName" width="150">资源名称</div>
+                <div field="url" width="100">资源URL</div>
+                <div field="type" width="50" renderer="r.renderType">类型</div>
+                <div field="icon" width="30" align="center" headerAlign="center" renderer="r.renderIcon">图标</div>
+                <div field="ipx" width="30" align="center" headerAlign="center">排序</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 角色数据添加与修改窗口, 默认隐藏 -->
+<div id="roleWindow" class="mini-window" style="width:230px;"
+     showModal="true" allowDrag="true" iconCls="icon-user-add"
+>
+    <div id="roleForm" class="form">
+        <input class="mini-hidden" name="id"/>
+        <table class="tbp">
+            <tr>
+                <td colspan="2">
+                    <p style="padding-bottom: 5px;">角色名称</p>
+                    <input name="roleName" class="mini-textbox" emptyText="请输入角色名称" required="true"
+                           style="width: 100%;"/>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <p style="padding-bottom: 5px;">角色备注</p>
+                    <input name="remark" class="mini-textarea" emptyText="请输入角色备注信息" style="width:100%;"/>
+                </td>
+            </tr>
+        </table>
+        <div class="footer-btn" style="text-align:right">
+            <!--<button id="ok" class="layui-btn layui-btn-mini" data-option="0">确定</button>-->
+            <!--<button id="cancel" class="layui-btn layui-btn-primary layui-btn-mini" iconCls="icon-cancel">取消</button>-->
+            <a id="ok" class="mini-button" iconCls="icon-ok">确定</a>
+            <a id="cancel" class="mini-button" iconCls="icon-cancel">取消</a>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    var init = function(){
+        mini.parse();
+        var resGrid = mini.get("resGrid");
+        var grid = app.initTablePlugin({
+            id: 'role',
+            name: '角色',
+            addCls: 'icon-user-add',
+            editCls: 'icon-user-edit',
+            params: {},
+            addApi: '${ctx}/role/save',
+            findApi: '${ctx}/role/find',
+            removeApi: '${ctx}/role/delete',
+            updateApi: '${ctx}/role/update'
+        });
+
+        //权限设置
+        $("a#allo").click(function () {
+            var vals = resGrid.getValue(true);
+            var row = grid.getSelecteds();
+            if (row.length != 1) {
+                alert("请选择一条角色记录");
+            } else {
+                var ids = (vals == "" ? [] : vals.split(","));
+                $.post("${ctx}/role/setRes", {rid: row[0].id, ids: ids}, function (res) {
+                    if (res.code == 0) {
+                        tips.success("[" + row[0].roleName + "]设置了" + res.data + " 条资源!");
+                    } else
+                        tips.error(res.message);
+                });
+            }
+        });
+    }
+
+    var r = {
+        renderType: function (e) {
+            if (e.value == 0) return "页面";
+            else if (e.value == 1) return "功能";
+            else if (e.value == 2) return "顶菜单";
+            else if (e.value == 3) return "外窗口";
+        },
+        renderIcon: function (e) {
+            return '<i class="' + e.value + '" style="vertical-align: initial;"></i>';
+        }
+    }
+
+    //选择表格行记录, 右边加载资源
+    var OnRowClick = function (e) {
+        var resGrid = mini.get("resGrid");
+        var rows = e.sender.getSelecteds();
+        var ids = [];
+        for (var i = 0, l = rows.length; i < l; i++) {
+            var r = rows[i];
+            ids.push(r.id);
+        }
+        $.get("${ctx}/role/findRes", {ids: ids}, function (res) {
+            if (res.code == 0) {
+                var ids = [];
+                $.each(res.data, function (i, o) {
+                    ids.push(o.resId);
+                });
+                resGrid.setValue(ids.join(","));
+            } else
+                tips.error(res.message);
+        });
+    }
+</script>

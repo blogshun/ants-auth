@@ -1,0 +1,277 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<style type="text/css">
+    ul.json-dict, ol.json-array {
+        list-style-type: none;
+        margin: 0 0 0 1px;
+        border-left: 1px dotted #ccc;
+        padding-left: 2em;
+    }
+
+    .json-string {
+        color: #0B7500;
+    }
+
+    .json-literal {
+        color: #1A01CC;
+        font-weight: bold;
+    }
+
+    /* Toggle button */
+    a.json-toggle {
+        position: relative;
+        color: inherit;
+        text-decoration: none;
+    }
+
+    a.json-toggle:focus {
+        outline: none;
+    }
+
+    a.json-toggle:before {
+        color: #aaa;
+        content: "\25BC"; /* down arrow */
+        position: absolute;
+        display: inline-block;
+        width: .5em;
+        left: -1em;
+    }
+
+    a.json-toggle.collapsed:before {
+        transform: rotate(-90deg); /* Use rotated down arrow, prevents right arrow appearing smaller than down arrow in some browsers */
+        -ms-transform: rotate(-90deg);
+        -webkit-transform: rotate(-90deg);
+    }
+
+    /* Collapsable placeholder links */
+    a.json-placeholder {
+        color: #aaa;
+        padding: 0 1em;
+        text-decoration: none;
+    }
+
+    a.json-placeholder:hover {
+        text-decoration: underline;
+    }
+
+    #json-renderer li {
+        font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+    }
+</style>
+<div class="mini-toolbar">
+    <table>
+        <tr>
+            <td style="width:100%;">
+                <a id="add" class="mini-button" iconCls="icon-res-add">增加</a>
+                <a id="edit" class="mini-button" iconCls="icon-res-edit">编辑</a>
+                <a id="remove" class="mini-button" iconCls="icon-res-delete">删除</a>
+            </td>
+            <td style="white-space:nowrap;">
+                <input id="key" class="mini-textbox w200" emptyText="请输入资源名称"/>
+                <a id="search" class="mini-button" iconCls="icon-search">查询</a>
+            </td>
+        </tr>
+    </table>
+</div>
+<div id="resGrid" class="mini-treegrid small-size" style="width:60%;height:620px;float:left;"
+     url="${ctx}/res/list" showTreeIcon="true" resultAsTree="false" autoLoad="false"
+     treeColumn="resName" idField="id" parentField="pid" allowDrag="true" onnodeselect="OnNodeSelect"
+     allowDrop="true" expandOnLoad="0"
+>
+    <div property="columns">
+        <div field="id" width="40" align="center" headerAlign="center">ID</div>
+        <div name="resName" field="resName" width="180">资源名称</div>
+        <div field="url" width="150">资源URL</div>
+        <div field="icon" width="50" align="center" headerAlign="center" renderer="r.renderIcon">图标</div>
+        <div field="type" width="50" renderer="r.renderType">类型</div>
+        <div field="ipx" width="40" align="center" headerAlign="center">排序</div>
+        <div field="remark">备注</div>
+    </div>
+</div>
+<div style="width:38%;float:left;margin-left:20px;height:700px;">
+    <div style="background: #F5F5F5;">
+        <div style="padding:8px 5px;">
+            <span class="icon-test"></span> 接口在线测试
+        </div>
+    </div>
+    <div style="line-height:40px;">
+        <p>名称 : <span id="apiname">在线测试</span> <span class="fr"><a id="test" class="mini-button"
+                                                                   iconCls="icon-debug-link">提交测试</a></span></p>
+        <p>URL : <input id="URL" class="mini-textbox" emptyText="请输入接口 URL API 地址" style="width: 60%;"/>
+            <input id="TYPE" name="type" class="mini-combobox w80" data="[{text:'GET'},{text:'POST'}]" value="GET"
+                   valueField="text"/></p>
+        <p>参数 : <textarea id="PARAMS" class="mini-textarea" emptyText="请输入示例 {id:1}" style="width: 100%;"></textarea>
+        </p>
+
+        <div style="border-bottom: 1px solid #CECECE;width:100%;padding-top:10px;"></div>
+        <p><span id="icon-copy" class="icon-copy" data-clipboard-target="json-renderer"></span> <span
+                class="icon-ss-code"></span></p>
+        <pre id="json-renderer" style="overflow-y: scroll;height:450px;"></pre>
+    </div>
+</div>
+<!-- 资源数据添加与修改窗口, 默认隐藏 -->
+<div id="resWindow" class="mini-window" style="width:350px;"
+     showModal="true" allowDrag="true" iconCls="icon-user-add"
+>
+    <div id="resForm" class="form">
+        <input class="mini-hidden" name="id"/>
+        <table class="tbp">
+            <tr>
+                <td colspan="2">
+
+                    所属 <input id="ptree" name="pid" virtualScroll="true" class="mini-treeselect" emptyText="请选择所属资源"
+                              showNullItem="true" textField="resName" valueField="id" parentField="pid"/>
+                    <span style="font-size:12px;color:red;margin-left:20px;">可以重新选择父资源</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    名称 <input name="resName" class="mini-textbox" emptyText="请输入资源名称" required="true"/>
+                </td>
+                <td class="tar">
+                    类型 <input name="type" class="mini-combobox" textField="text" valueField="id" emptyText="请选择类型"
+                              data="[{id:'0', text:'页面'},{id:'1', text:'功能'},{id:'2', text:'顶菜单'},{id:'3', text:'外窗口'}]"
+                              value="0" required="true" style="width: 100px;"/>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    URL <input name="url" class="mini-textbox" emptyText="请输入URL" style="width: 300px"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    排序 <input name="ipx" vtype="int" class="mini-textbox" emptyText="请输入排序" required="true"
+                              style="width: 80px;"/></p>
+                </td>
+                <td class="tar">
+                    图标 <input name="icon" class="mini-textbox" emptyText="请输入图标" style="width: 100px;"/></p>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    描述 <br/>
+                    <input name="remark" class="mini-textarea" emptyText="请输入资源描述信息" style="width:100%;"/>
+                </td>
+            </tr>
+        </table>
+        <div class="footer-btn" style="text-align:right">
+            <!--<button id="ok" class="layui-btn layui-btn-mini" data-option="0">确定</button>-->
+            <!--<button id="cancel" class="layui-btn layui-btn-primary layui-btn-mini" iconCls="icon-cancel">取消</button>-->
+            <a id="ok" class="mini-button" iconCls="icon-ok">确定</a>
+            <a id="cancel" class="mini-button" iconCls="icon-cancel">取消</a>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript" src="${ctx}/static/js/jquery.json-viewer.js"></script>
+<script type="text/javascript" src="${ctx}/static/js/ZeroClipboard.js"></script>
+<script type="text/javascript">
+    var init = function(){
+        mini.parse();
+        var ptree = mini.get("ptree");
+        var grid = app.initTablePlugin({
+            id: 'res',
+            name: '资源',
+            addCls: 'icon-res-add',
+            editCls: 'icon-res-edit',
+            params: {},
+            addApi: '${ctx}/res/save',
+            findApi: '${ctx}/res/find',
+            removeApi: '${ctx}/res/delete',
+            updateApi: '${ctx}/res/update',
+            showAddEvent: function (win, frm) {
+                ptree.load("${ctx}/res/all");
+                var row = grid.getSelected();
+                if (row)ptree.setValue(row.id);
+            },
+            showEditEvent: function (win, frm) {
+                ptree.load("${ctx}/res/all");
+            },
+            onSearchEvent: function () {
+                var val = mini.get("key").getValue();
+                return {tjKey: "resName", keyValue: val};
+            },
+            submitBeforeUpdateEvent: function (res, obj, win, frm) {
+                var row = obj.getSelected();
+                var p = ptree.getValue();
+                if (row.id == p) {
+                    tips.error("错误, 所属资源不能选择自己!");
+                    return false;
+                }
+                return true;
+            }
+        });
+        $(function () {
+
+            $("span.icon-ss-code").click(function () {
+                $('#json-renderer').find('a.json-toggle').click();
+                if ($(this).attr("class") == "icon-zk-code") {
+                    $(this).attr("class", "icon-ss-code");
+                } else {
+                    $(this).attr("class", "icon-zk-code");
+                }
+            });
+            // 定义一个新的复制对象
+            var clip = new ZeroClipboard(document.getElementById("icon-copy"), {
+                moviePath: "${ctx}/static/swf/ZeroClipboard.swf"
+            });
+
+
+            // 复制内容到剪贴板成功后的操作
+            clip.on('complete', function (client, args) {
+                tips.success("接口数据文本复制成功!");
+            });
+
+            $("a#test").click(function () {
+                var urlString = mini.get("URL").getValue();
+                if (urlString == "") {
+                    alert("请输入 URL API 地址");
+                    return;
+                }
+                var type = mini.get("TYPE").getValue();
+                var data = mini.get("PARAMS").getValue();
+                try {
+                    var d = ""
+                    if (data != "")
+                        d = eval('(' + data + ')');
+                    $.ajax({
+                        url: urlString,
+                        type: type,
+                        data: d,
+                        dataType: 'json',
+                        success: function (res) {
+                            $('#json-renderer').jsonViewer(res, {collapsed: false, withQuotes: false});
+                        },
+                        error: function () {
+                            alert("error!");
+                        }
+                    });
+                } catch (e) {
+                    alert("参数错误, 不是Json数据格式!");
+                }
+            });
+        });
+    }
+
+    //选择左边表格行记录, 如果是子节点则填充右边接口
+    var OnNodeSelect = function (e) {
+        if (e.isLeaf) {
+            var node = e.node;
+            mini.get("URL").setValue("${ctx}" + node.url);
+            $("span#apiname").text("测试" + node.resName);
+        }
+    }
+
+    var r = {
+        renderType: function (e) {
+            if (e.value == 0) return "页面";
+            else if (e.value == 1) return "功能";
+            else if (e.value == 2) return "顶菜单";
+            else if (e.value == 3) return "外窗口";
+        },
+        renderIcon: function (e) {
+            return '<i class="' + e.value + '" style="vertical-align: initial;"></i>';
+        }
+    }
+</script>

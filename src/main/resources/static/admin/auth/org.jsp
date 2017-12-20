@@ -1,0 +1,162 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<style type="text/css">
+    .mini-panel-border {
+        border: none;
+    }
+</style>
+<div class="mini-splitter" style="width:100%;height:620px;">
+    <div size="200" showCollapseButton="false" minSize="200">
+        <div style="border-bottom:1px solid #E4EAEC;padding:7px 0 7px 5px;font-size:14px;">
+            组织列表
+            <div class="fr" style="margin-top:-2px">
+                <a id="add" class="mini-button" iconCls="icon-addnew"
+                   style="background:transparent;border:none;margin-right:0;padding-left: 0px;"></a>
+                <a id="edit" class="mini-button" iconCls="icon-edit"
+                   style="background:transparent;border:none;margin-right:0;padding-left: 0px;"></a>
+                <a id="remove" class="mini-button" iconCls="icon-remove"
+                   style="background:transparent;border:none;margin-right:0;padding-left: 0px;"></a>
+                <a id="refresh" class="mini-button" iconCls="icon-reload"
+                   style="background:transparent;border:none;margin-right:0;padding-left: 0px;"></a>
+            </div>
+        </div>
+        <ul id="orgGrid" class="mini-tree" url="${ctx}/org/list" style="margin:8px 5px;"
+            showTreeIcon="true" textField="orgName" idField="id" parentField="pid" resultAsTree="false"
+            showArrow="true" expandOnLoad="0" autoLoad="false" ondrawnode="OnOrgDrawnode" onnodeclick="onNodeClick"
+        >
+        </ul>
+    </div>
+    <div showCollapseButton="false">
+        <div id="userGrid" title="用户列表" showHeader="true" class="mini-datagrid"
+             url="${ctx}/org/findUsers" idField="id" multiSelect="true"
+        >
+            <div property="columns">
+                <div field="avatar" width="30" renderer="r.renderAvatar">头像</div>
+                <div field="account">账号</div>
+                <div field="userName" width="70">昵称</div>
+                <div field="sex" width="40" align="center" headerAlign="center" renderer="r.renderSex">性别</div>
+                <div field="userType" type="comboboxcolumn" width="80">类型
+                    <input property="editor" class="mini-combobox" url="${ctx}/dict/code?id=YHLX" valueField="val"
+                           textField="name"/>
+                </div>
+                <div field="position" width="80">职位</div>
+                <div field="phone" width="90">电话</div>
+                <div field="email">邮箱</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 组织数据添加与修改窗口, 默认隐藏 -->
+<div id="orgWindow" class="mini-window" style="width:200px;"
+     showModal="true" allowDrag="true" iconCls="icon-addnew"
+>
+    <div id="orgForm" class="form">
+        <input class="mini-hidden" name="id"/>
+        <table class="tbp">
+            <tr>
+                <td colspan="2">
+                    <p style="padding-bottom: 5px;">所属组织</p>
+                    <input id="ptree" name="pid" virtualScroll="true" class="mini-treeselect" emptyText="请选择所属组织"
+                           expandOnLoad="0"
+                           showNullItem="true" textField="orgName" valueField="id" parentField="pid"
+                           style="width: 100%;"/>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <p style="padding-bottom: 5px;">组织名称</p>
+                    <input name="orgName" class="mini-textbox" emptyText="请输入组织名称" required="true"
+                           style="width: 100%;"/>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <p style="padding-bottom: 5px;">排序</p>
+                    <input name="ipx" vtype="int" class="mini-textbox" emptyText="请输入排序" required="true"
+                           style="width: 100%;"/>
+                </td>
+            </tr>
+        </table>
+        <div class="footer-btn" style="text-align:right">
+            <a id="ok" class="mini-button" iconCls="icon-ok">确定</a>
+            <a id="cancel" class="mini-button" iconCls="icon-cancel">取消</a>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var init = function(){
+        mini.parse();
+        var userGrid = mini.get("userGrid");
+        userGrid.load();
+        var ptree = mini.get("ptree");
+        var grid = app.initTablePlugin({
+            id: 'org',
+            name: '组织',
+            addCls: 'icon-addnew',
+            editCls: 'icon-edit',
+            params: {},
+            addApi: '${ctx}/org/save',
+            findApi: '${ctx}/org/find',
+            removeApi: '${ctx}/org/delete',
+            updateApi: '${ctx}/org/update',
+            showAddEvent: function (win, frm) {
+                ptree.load("${ctx}/org/all");
+                var row = grid.getSelected();
+                if (row)ptree.setValue(row.id);
+            },
+            showEditEvent: function (win, frm) {
+                ptree.load("${ctx}/org/all");
+            },
+            submitBeforeUpdateEvent: function (res, obj, win, frm) {
+                var row = obj.getSelected();
+                var p = ptree.getValue();
+                if (row.id == p) {
+                    tips.error("错误, 所属组织不能选择自己!");
+                    return false;
+                }
+                return true;
+            }
+        });
+
+        //刷新树并重置选择
+        $("a#refresh").click(function () {
+            grid.load();
+            grid.deselectAll(false);
+        });
+    }
+
+    var r = {
+        renderAvatar: function (e) {
+            return '<img src= "${ctx}/' + e.value + '" onerror="" class="avatar xz fl" />';
+        },
+        renderSex: function (e) {
+            if (e.value == 0)
+                return '<i class="mini-iconfont table-icon icon-female"></i>';
+            else if (e.value == 1)
+                return '<i class="mini-iconfont table-icon icon-male"></i>';
+        }
+    }
+
+    var OnOrgDrawnode = function (e) {
+        var node = e.node;
+        if (node.type) {
+            e.nodeHtml = '<span style="color:red;">' + node.orgName + '</span>';
+        }
+    }
+
+    var onNodeClick = function (e) {
+        var userGrid = mini.get("userGrid");
+        var node = e.node;
+        if (e.isLeaf) {
+            userGrid.load({filters: '{orgs:"' + node.id + '"}'});
+        } else {
+            var sender = e.sender;
+            var ids = [];
+            $.each(sender.getChildNodes(node), function (i, obj) {
+                ids.push(obj.id);
+            });
+            userGrid.load({filters: '{orgs:"' + ids + '"}'});
+        }
+    }
+</script>

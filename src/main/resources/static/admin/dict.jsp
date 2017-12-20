@@ -1,0 +1,140 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<style type="text/css">
+    .mini-splitter-pane2 {
+        border-left: none;
+    }
+</style>
+<div class="mini-splitter" style="width:100%;height:600px;">
+    <div size="180" showCollapseButton="false" minSize="180">
+        <div style="border-bottom:1px solid #E4EAEC;padding:7px 0 7px 5px;font-size:14px;">
+            <i class="fa fa-superpowers"></i>数据字典树
+        </div>
+        <ul id="dictGrid" class="mini-tree" style="width:100%;margin:8px 5px;" url="${ctx}/dict/list"
+            showTreeIcon="true" textField="name" idField="id" parentField="pid" resultAsTree="false"
+            autoLoad="false" expandOnLoad="0" onnodeclick="OnNodeClick" ondrawnode="OnDictDrawnode">
+        </ul>
+    </div>
+    <div showCollapseButton="false">
+        <div class="mini-toolbar" style="padding:2px;border-top:0;border-left:0;border-right:0;">
+            <a class="mini-button" iconCls="icon-book-add" plain="true" id="add">新增</a>
+            <a class="mini-button" iconCls="icon-book-edit" plain="true" id="edit">修改</a>
+            <a class="mini-button" iconCls="icon-book-delete" plain="true" id="remove">删除</a>
+        </div>
+        <div id="grid" class="mini-datagrid" style="height:100%;" bodyStyle="" showPager="false" url="${ctx}/dict/all"
+             ajaxType="get">
+            <div property="columns">
+                <div field="code" width="80">编号</div>
+                <div field="name" width="100">字典名称</div>
+                <div field="val" width="100">数据值</div>
+                <div field="ipx" width="50" headerAlign="center" align="center">排序</div>
+                <div field="type" width="50" headerAlign="center" align="center" renderer="r.renderType">类型</div>
+                <div field="demo" width="200" renderer="r.renderDemo">调用示例</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="dictWindow" class="mini-window" style="width:240px;"
+     showModal="true" allowDrag="true"
+>
+    <div id="dictForm" class="form">
+        <input class="mini-hidden" name="id"/>
+        <table class="tbp">
+            <tr>
+                <td class="tar">所属字典</td>
+                <td class="tar"><input id="ptree" name="pid" expandOnLoad="0" class="mini-treeselect" emptyText="请选所属字典"
+                                       textField="name" valueField="id" parentField="pid"/></td>
+            </tr>
+            <tr>
+                <td class="tar">编号</td>
+                <td class="tar"><input name="code" class="mini-textbox" required="true"/></td>
+            </tr>
+            <tr>
+                <td class="tar">名称</td>
+                <td class="tar"><input name="name" class="mini-textbox" required="true"/></td>
+            </tr>
+            <tr>
+                <td class="tar">数值</td>
+                <td class="tar"><input name="val" class="mini-textbox"/></td>
+            </tr>
+            <tr>
+                <td class="tar">排序</td>
+                <td class="tar"><input name="ipx" class="mini-textbox" required="true" vtype="int"/></td>
+            </tr>
+        </table>
+        <div class="footer-btn" style="text-align:right">
+            <a id="ok" class="mini-button" iconCls="icon-ok">确定</a>
+            <a id="cancel" class="mini-button" iconCls="icon-cancel">取消</a>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    var init = function(){
+        mini.parse();
+        var grid = mini.get("grid");
+        grid.load({filters: '{pid:""}'});
+        var ptree = mini.get("ptree");
+        var dictGrid = app.initTablePlugin({
+            id: 'dict',
+            name: '数据字典',
+            addCls: 'icon-book-add',
+            editCls: 'icon-book-edit',
+            params: {},
+            addApi: '${ctx}/dict/save',
+            findApi: '${ctx}/dict/find',
+            removeApi: '${ctx}/dict/delete',
+            updateApi: '${ctx}/dict/update',
+            showAddEvent: function (win, frm) {
+                ptree.load("${ctx}/dict/list");
+                var row = dictGrid.getSelected();
+                if (row)ptree.setValue(row.id);
+            },
+            showEditEvent: function (win, frm) {
+                ptree.load("${ctx}/dict/list");
+            },
+            submitBeforeUpdateEvent: function (res, obj, win, frm) {
+                var row = obj.getSelected();
+                var p = ptree.getValue();
+                if (row.id == p) {
+                    tips.error("错误, 所属字典不能选着自己!");
+                    return false;
+                }
+                return true;
+            }
+        });
+    }
+
+    //点击字典树，右边加载详细
+    var OnNodeClick = function (e) {
+        var grid = mini.get("grid");
+        var node = e.node;
+        grid.load({filters: '{pid:"' + node.id + '"}'});
+    }
+
+    var r = {
+        renderDemo: function (e) {
+            var rec = e.record;
+            return '<span onclick="onOpenWin(\'' + rec.code + '\')" style="color:blue;">${ctx}/dict/code?id=' + rec.code + '</span>';
+        },
+        renderType: function (e) {
+            if (e.value == 0) return '<span style="color:green;">添加</span>';
+            else if (e.value == 1) return '<span style="color:red;">系统</span>';
+        }
+    }
+
+    var onOpenWin = function (code) {
+        window.open('${ctx}/dict/code?id=' + code);
+    }
+
+    var OnDictDrawnode = function (e) {
+        var node = e.node;
+        if (node.type) {
+            e.nodeHtml = '<span style="color:red;">' + node.name + '</span>';
+        }
+    }
+</script>
+
+</body>
+</html>
