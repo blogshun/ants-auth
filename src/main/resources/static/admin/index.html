@@ -213,14 +213,14 @@
             <div class="title"><i class="ac-font" nameCls="#icon-jibiequanxian"></i>权限管理 <span
                     class="fa fa-angle-right"></span></div>
             <div class="sub-menu" style="display: none">
-                <div target="${ctx}/admin/auth/user.jsp"><i class="ac-font" nameCls="#icon-jibiequanxian"></i>用户管理</div>
-                <div target="${ctx}/admin/auth/role.jsp"><i class="ac-font" nameCls="#icon-jibiequanxian"></i>角色管理</div>
-                <div target="${ctx}/admin/auth/res.jsp"><i class="ac-font" nameCls="#icon-jibiequanxian"></i>资源管理</div>
-                <div target="${ctx}/admin/auth/org.jsp"><i class="ac-font" nameCls="#icon-jibiequanxian"></i>组织管理</div>
+                <div target="${ctx}/admin/auth/user.shtml"><i class="ac-font" nameCls="#icon-jibiequanxian"></i>用户管理</div>
+                <div target="${ctx}/admin/auth/role.shtml"><i class="ac-font" nameCls="#icon-jibiequanxian"></i>角色管理</div>
+                <div target="${ctx}/admin/auth/res.shtml"><i class="ac-font" nameCls="#icon-jibiequanxian"></i>资源管理</div>
+                <div target="${ctx}/admin/auth/org.shtml"><i class="ac-font" nameCls="#icon-jibiequanxian"></i>组织管理</div>
             </div>
         </li>
         <li>
-            <div class="title" target="${ctx}/admin/session.jsp"><i class="ac-font" nameCls="#icon-shezhi"></i>会话管理</div>
+            <div class="title" target="${ctx}/admin/session.shtml"><i class="ac-font" nameCls="#icon-shezhi"></i>会话管理</div>
         </li>
         <li>
             <div class="title" target="${ctx}/druid/" type="1"><i class="ac-font" nameCls="#icon-user-copy"></i>SQL监控
@@ -230,15 +230,15 @@
             <div class="title"><i class="ac-font" nameCls="#icon-shezhi"></i>任务管理</div>
         </li>
         <li>
-            <div class="title" target="${ctx}/admin/dict.jsp"><i class="ac-font" nameCls="#icon-shujuku"></i>字典管理</div>
+            <div class="title" target="${ctx}/admin/dict.shtml"><i class="ac-font" nameCls="#icon-shujuku"></i>字典管理</div>
         </li>
         <li>
             <div class="title"><i class="ac-font" nameCls="#icon-rizhi"></i>日志管理 <span class="fa fa-angle-right"></span>
             </div>
             <div class="sub-menu" style="display: none">
-                <div target="${ctx}/admin/log/login.jsp"><i class="ac-font" nameCls="#icon-rizhi"></i>登录日志</div>
-                <div target="${ctx}/admin/log/service.jsp"><i class="ac-font" nameCls="#icon-rizhi"></i>业务日志</div>
-                <div target="${ctx}/admin/log/excption.jsp"><i class="ac-font" nameCls="#icon-rizhi"></i>错误日志</div>
+                <div target="${ctx}/admin/log/login.shtml"><i class="ac-font" nameCls="#icon-rizhi"></i>登录日志</div>
+                <div target="${ctx}/admin/log/service.shtml"><i class="ac-font" nameCls="#icon-rizhi"></i>业务日志</div>
+                <div target="${ctx}/admin/log/excption.shtml"><i class="ac-font" nameCls="#icon-rizhi"></i>错误日志</div>
             </div>
         </li>
     </ul>
@@ -249,43 +249,6 @@
 </div>
 <script type="text/javascript" src="${ctx}/static/js/ui.js"></script>
 <script type="text/javascript" src="${ctx}/static/js/app.js"></script>
-<!--<%&#45;&#45;<script type="text/javascript" src="${ctx}/static/js/jquery.json.js"></script>&#45;&#45;%>-->
-<!--<%&#45;&#45;<script type="text/javascript" src="${ctx}/static/js/transport_jquery.js"></script>&#45;&#45;%>-->
-<!--<%&#45;&#45;<script type="text/javascript" src="${ctx}/static/js/utils.js"></script>&#45;&#45;%>-->
-<!--<%&#45;&#45;<script type="text/javascript" src="${ctx}/static/js/listtable.js"></script>&#45;&#45;%>-->
-<!--<%&#45;&#45;<script type="text/javascript" src="${ctx}/static/js/listtable_pb.js"></script>&#45;&#45;%>-->
-<!--<%&#45;&#45;<script type="text/javascript" src="${ctx}/static/js/perfect-scrollbar.min.js"></script>&#45;&#45;%>-->
-<!--<%&#45;&#45;<script type="text/javascript" src="${ctx}/static/js/dsc_admin2.0.js"></script>&#45;&#45;%>-->
-<!--<%&#45;&#45;<script type="text/javascript" src="${ctx}/static/js/jquery-ui.min.js"></script>&#45;&#45;%>-->
-<!--<%&#45;&#45;<script type="text/javascript" src="${ctx}/static/js/jquery.cookie.js"></script>&#45;&#45;%>-->
-<!--<%&#45;&#45;<script type="text/javascript" src="${ctx}/static/js/calendar.min.js"></script>&#45;&#45;%>-->
-<!--<%&#45;&#45;<script type="text/javascript" src="${ctx}/static/js/jquery.bgColorSelector.js"></script>&#45;&#45;%>-->
-<!--<%&#45;&#45;<script type="text/javascript" src="${ctx}/static/js/jquery.validation.min.js"></script>&#45;&#45;%>-->
-<!--<%&#45;&#45;<script type="text/javascript" src="${ctx}/static/js/common.js"></script>&#45;&#45;%>-->
-<!--<script type="text/javascript" src="${ctx}/static/js/jquery.form.js"></script>-->
-<!--<%&#45;&#45;<script type="text/javascript" src="${ctx}/static/js/jquery.nyroModal.js"></script>&#45;&#45;%>-->
-<!--<%&#45;&#45;&lt;!&ndash;[if lt IE 9]>&#45;&#45;%>-->
-<!--<%&#45;&#45;<script src="${ctx}/static/js/css3-mediaqueries.js"></script>&#45;&#45;%>-->
-<!--<%&#45;&#45;<![endif]&ndash;&gt;&#45;&#45;%>-->
-<!--<%&#45;&#45;<script language="JavaScript">&#45;&#45;%>-->
-<!--<%&#45;&#45;/*这里把JS用到的所有语言都赋值到这里*/&#45;&#45;%>-->
-<!--<%&#45;&#45;var process_request = "<i class='icon-spinner icon-spin'></i>";&#45;&#45;%>-->
-<!--<%&#45;&#45;var todolist_caption = "记事本";&#45;&#45;%>-->
-<!--<%&#45;&#45;var todolist_autosave = "自动保存";&#45;&#45;%>-->
-<!--<%&#45;&#45;var todolist_save = "保存";&#45;&#45;%>-->
-<!--<%&#45;&#45;var todolist_clear = "清除";&#45;&#45;%>-->
-<!--<%&#45;&#45;var todolist_confirm_save = "是否将更改保存到记事本？";&#45;&#45;%>-->
-<!--<%&#45;&#45;var todolist_confirm_clear = "是否清空内容？";&#45;&#45;%>-->
-<!--<%&#45;&#45;var expand_all = "展开";&#45;&#45;%>-->
-<!--<%&#45;&#45;var collapse_all = "闭合";&#45;&#45;%>-->
-<!--<%&#45;&#45;var shop_name_not_null = "商店名称不能为空";&#45;&#45;%>-->
-<!--<%&#45;&#45;var good_name_not_null = "商品名称不能为空";&#45;&#45;%>-->
-<!--<%&#45;&#45;var good_category_not_null = "商品分类不能为空";&#45;&#45;%>-->
-<!--<%&#45;&#45;var good_number_not_number = "商品数量不是数值";&#45;&#45;%>-->
-<!--<%&#45;&#45;var good_price_not_number = "商品价格不是数值";&#45;&#45;%>-->
-<!--<%&#45;&#45;window["ctx"] = "${ctx}";&#45;&#45;%>-->
-<!--<%&#45;&#45;</script>&#45;&#45;%>-->
-<!--<%&#45;&#45;<script type="text/javascript" src="${ctx}/static/js/jquery.purebox.js"></script>&#45;&#45;%>-->
 <script type="text/javascript">
     app.init({ctx: "${ctx}"});
 </script>

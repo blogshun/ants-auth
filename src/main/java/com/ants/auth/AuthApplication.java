@@ -20,11 +20,11 @@ public class AuthApplication {
 
 
     /**
-     *页面
+     * 页面
      */
-    @GET("/admin/{md}/{page}")
+    @GET("/admin/{md}/{page}.shtml")
     public Resource assets(@PathVariable String md, @PathVariable String page) {
-        return new Resource("/static/admin/".concat(md).concat("/").concat(page));
+        return new Resource("/static/admin/".concat(md).concat("/").concat(page).concat(".html"));
     }
 
     @GET("/admin/{page}.shtml")
@@ -38,6 +38,11 @@ public class AuthApplication {
     @GET("/static/css/{md}/{name}")
     public Resource css(@PathVariable String md, @PathVariable String name) {
         return new Resource("/static/css/".concat(md).concat("/").concat(name));
+    }
+
+    @GET("/static/css/images/{md}/{name}")
+    public Resource cssImages(@PathVariable String md, @PathVariable String name) {
+        return new Resource("/static/css/images/".concat(md).concat("/").concat(name));
     }
 
     @GET("/static/css/{name}")

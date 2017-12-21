@@ -2,6 +2,7 @@ package com.ants.auth.controller;
 
 import com.ants.auth.common.SysConst;
 import com.ants.auth.service.SystemService;
+import com.ants.auth.vo.LoginVO;
 import com.ants.common.annotation.action.Controller;
 import com.ants.common.annotation.action.GET;
 import com.ants.common.annotation.action.POST;
@@ -30,14 +31,11 @@ public class SystemController {
     /**
      * 系统用户登录
      *
-     * @param username 登录账号
-     * @param password 登录密码
-     * @param code     验证码
      * @return
      */
-    @POST("/login")
-    public Object login(String username, String password, String code) {
-        int result = systemService.login(username, password, code);
+    @POST("/authorize")
+    public Object authorize(LoginVO loginVO) {
+        int result = systemService.authorize(loginVO);
         if (result == -1) {
             return Json.fail("登录失败, 验证码输入错误!");
         } else if (result == -2) {

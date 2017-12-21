@@ -92,6 +92,23 @@ var app = {
         }
         message();
     },
+    encrypt: function (text) {
+        var key = CryptoJS.enc.Utf8.parse("_utravel12345678");
+        var srcs = CryptoJS.enc.Utf8.parse(text);
+        var encrypted = CryptoJS.AES.encrypt(srcs, key, {mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.Pkcs7});
+        return encrypted.toString();
+    },
+    sendJSON: function (type, url, data, fun) {
+        $.ajax({
+            url: url,
+            type: type,
+            data: data,
+            contentType: "application/json",
+            success: function (res) {
+                fun(res);
+            }
+        });
+    },
     _initMenus: function () {
         var that = this;
         $("div.treeMenu>ul>li>div.title").click(function () {
@@ -117,7 +134,7 @@ var app = {
         });
 
         $("div.sub-menu>div").click(function () {
-            var title = $(this).parents("li").find("div.title").text()+" - "+$(this).text();
+            var title = $(this).parents("li").find("div.title").text() + " - " + $(this).text();
             var target = $(this).attr("target");
             var type = $(this).attr("type");
             $(this).parents("ul").find(".active").removeClass("active");
@@ -125,7 +142,7 @@ var app = {
             that.loadMain(target, type, title);
         });
 
-        that.loadMain(that.config.ctx + "/admin/main.jsp", 0, "主面板概览");
+        that.loadMain(that.config.ctx + "/admin/main.shtml", 0, "主面板概览");
 
         //更换svg图标引用
         $("i.ac-font").each(function (i, obj) {
@@ -146,7 +163,7 @@ var app = {
                 delete window.setParams, window.init;
                 $(".warpper>div.title").text(title);
                 $(".warpper>div.content").html(res);
-                if(window.init) window.init();
+                if (window.init) window.init();
                 if (typeof window.setParams != "undefined" && params) window.setParams(params);
             }, "html");
         } else if (type == "1") {
@@ -166,7 +183,7 @@ var app = {
         $(document).ajaxSend(function (evt, request, settings) {// 请求开始
 
         }).ajaxComplete(function (event, request, settings, xhr) {
-            if (settings.url.indexOf(".jsp") > 0) {
+            if (settings.url.indexOf(".shtml") > 0) {
 
             } else {
                 var res = JSON.parse(request.responseText);

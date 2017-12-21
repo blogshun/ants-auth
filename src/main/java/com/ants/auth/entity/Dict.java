@@ -1,5 +1,6 @@
 package com.ants.auth.entity;
 
+import com.ants.common.annotation.action.Entity;
 import com.ants.plugin.orm.Column;
 import com.ants.plugin.orm.Id;
 import com.ants.plugin.orm.Table;
@@ -12,6 +13,7 @@ import java.io.Serializable;
  * @author MrShun
  * @version 1.0.0 2017-09-11
  */
+@Entity
 @Table(name = "sys_dict")
 public class Dict implements Serializable {
 
