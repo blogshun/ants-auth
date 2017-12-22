@@ -103,11 +103,9 @@ public class DictService {
         if (id == null) {
             throw new TipException("id 参数不能为空!");
         }
-        Dict dict = new Dict();
-        dict.setCode(id);
         Criteria criteria = db.createCriteria(Dict.class);
         criteria.label("name, val");
-        criteria.and("pid", Condition.EQ, "(select id from sys_dict where code = ?)");
+        criteria.and("pid = (select id from sys_dict where code = ?)", Condition.EMBED, id);
         criteria.orderBy("ipx", OrderBy.ASC);
         return criteria.findList();
     }

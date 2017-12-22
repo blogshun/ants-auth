@@ -69,7 +69,6 @@ public class DictController {
         if (res == -1) {
             return Json.fail("Code已经存在!");
         }
-        ;
         if (res == -2) {
             return Json.fail("失败, 不能修改系统类型字典CODE!");
         }

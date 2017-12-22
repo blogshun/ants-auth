@@ -105,7 +105,7 @@
             name: '用户',
             addCls: 'icon-user-add',
             editCls: 'icon-user-edit',
-            params: {sortField: "id", sortOrder: "desc"},
+            params: {sortField: "id", sortOrder: "DESC"},
             addApi: '${ctx}/user/save',
             findApi: '${ctx}/user/find',
             removeApi: '${ctx}/user/delete',
@@ -188,7 +188,7 @@
                 url: "${ctx}/user/uploadAvatar",
                 success: function (res) {
                     if (res.code == 0) {
-                        $("img.user_tx").attr("src", "${ctx}/" + res.data);
+                        $("img.user_tx").attr("src", res.data);
                         mini.get("avatar").setValue(res.data);
                     } else
                         tips.error(res.message);
@@ -200,7 +200,7 @@
 
     var r = {
         renderAvatar: function (e) {
-            return '<img src= "${ctx}/' + e.value + '" onerror="" class="avatar xz fl" />';
+            return '<img src= "' + e.value + '" onerror="" class="avatar xz fl" />';
         },
         renderSex: function (e) {
             if (e.value == 0)
