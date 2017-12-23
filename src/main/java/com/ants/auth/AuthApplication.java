@@ -5,8 +5,13 @@ import com.ants.common.annotation.action.GET;
 import com.ants.common.annotation.action.PathVariable;
 import com.ants.common.annotation.boot.PropertyConfiguration;
 import com.ants.common.annotation.service.Application;
+import com.ants.core.holder.ClientHolder;
 import com.ants.core.startup.JTomcat;
 import com.ants.restful.render.Resource;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * @author MrShun
@@ -75,8 +80,17 @@ public class AuthApplication {
     }
 
     @GET("/login")
-    public Resource login(@PathVariable String name) {
-        return new Resource("/static/login.html");
+    public void login(@PathVariable String name) throws IOException {
+        //写入信息免登陆
+        String cookie = ClientHolder.getCookie("_ants-auth-login");
+        HttpServletRequest request = ClientHolder.getRequest();
+        HttpServletResponse response = ClientHolder.getResponse();
+        if(cookie == null){
+            Resource resource = new Resource("/static/login.html");
+            resource.render(request, response);
+        }else{
+            response.sendRedirect(request.getContextPath()+"/admin/index.shtml");
+        }
     }
 
     public static void main(String[] args) {
