@@ -83,7 +83,6 @@ public class AuthApplication {
 
     @GET("/login")
     public void login(@PathVariable String name) throws IOException {
-        //写入信息免登陆
         Cookie cookie = ClientHolder.getCookie(SysConst.LOGIN_COOKIE_NAME);
         HttpServletRequest request = ClientHolder.getRequest();
         HttpServletResponse response = ClientHolder.getResponse();
