@@ -65,7 +65,7 @@
                         <p style="padding-top:8px;">性别 <input id="sex" name="sex" required="true" emptyText="请选择性别"
                                                               class="mini-combobox" data="[{id:'1', text:'男'},{id:'0', text:'女'}]"/></p>
                     </div>
-                    <img src="${ctx}/upload/tx.png" class="user_tx xz"/>
+                    <img src="${ctx}/static/images/tx.jpg" onerror="this.src='${ctx}/static/images/tx.jpg'" class="user_tx xz"/>
                     <form id="txFileForm" method="post" enctype="multipart/form-data" runat="server">
                         <input name="txImg" id="user_tx" type="file" style="visibility:hidden;">
                     </form>
@@ -111,7 +111,7 @@
             removeApi: '${ctx}/user/delete',
             updateApi: '${ctx}/user/update',
             showAddEvent: function (win, frm) {
-                $("img.user_tx").attr("src", "${ctx}/upload/tx.png");
+                $("img.user_tx").attr("src", "${ctx}/static/images/tx.jpg");
             },
             showEditEvent: function (win, frm, res) {
                 $("img.user_tx").attr("src", "${ctx}/" + res.data.avatar);
@@ -200,7 +200,7 @@
 
     var r = {
         renderAvatar: function (e) {
-            return '<img src= "' + e.value + '" onerror="" class="avatar xz fl" />';
+            return `<img src= "` + e.value + `" onerror="this.src='${ctx}/static/images/tx.jpg'" class="avatar xz fl" />`;
         },
         renderSex: function (e) {
             if (e.value == 0)

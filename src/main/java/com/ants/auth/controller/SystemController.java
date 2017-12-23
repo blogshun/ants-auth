@@ -8,6 +8,7 @@ import com.ants.common.annotation.action.GET;
 import com.ants.common.annotation.action.POST;
 import com.ants.common.annotation.service.Autowired;
 import com.ants.common.utils.VerifyCodeUtil;
+import com.ants.core.holder.ClientHolder;
 import com.ants.restful.render.Json;
 
 import javax.servlet.ServletException;
@@ -43,6 +44,8 @@ public class SystemController {
         } else if (result == -3) {
             return Json.fail("登录失败, 该账号已被锁定请联系管理员!");
         }
+        //写入信息免登陆
+        ClientHolder.setCookie(SysConst.LOGIN_COOKIE_NAME, "true", 60*60*24*1);
         return Json.success("ok");
     }
 
@@ -69,13 +72,13 @@ public class SystemController {
     }
 
     /**
-     * 退出系统
+     * 退出系统, 清除Cookie
      *
-     * @param request
      * @return
      */
     @GET("/exit")
-    public Object exit(HttpServletRequest request) {
-        return null;
+    public Object exit() {
+        ClientHolder.delCookie(SysConst.LOGIN_COOKIE_NAME);
+        return ClientHolder.getSessionId();
     }
 }

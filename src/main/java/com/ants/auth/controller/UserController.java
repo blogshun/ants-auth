@@ -152,7 +152,7 @@ public class UserController {
             }
             String submittedFileName = txImg.getSubmittedFileName();
             String fileName = "tx" + System.currentTimeMillis() + submittedFileName.substring(submittedFileName.lastIndexOf("."), submittedFileName.length());
-            OssResult result = ossService.uploadStream2OSS(txImg.getInputStream(), fileName, "avatar/");
+            OssResult result = ossService.uploadStream2OSS(txImg.getInputStream(), fileName, "auth/upload/avatar/");
             return Json.success(result.getUrl());
         } else {
             return Json.fail("请选择jpg 或者 png 图片文件进行上传!");

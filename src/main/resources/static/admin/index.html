@@ -10,7 +10,7 @@
     <link href="${ctx}/static/css/ui.css" rel="stylesheet" type="text/css"/>
     <link href="${ctx}/static/css/large.css" rel="stylesheet" type="text/css"/>
     <link href="${ctx}/static/css/main.css" rel="stylesheet" type="text/css"/>
-    <link href="${ctx}/static/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+    <link href="http://ants-m.oss-cn-beijing.aliyuncs.com/auth/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
     <link href="${ctx}/static/css/icons.css" rel="stylesheet" type="text/css"/>
     <script type="text/javascript" src="${ctx}/static/js/jquery-1.9.1.min.js"></script>
     <script type="text/javascript" src="${ctx}/static/fonts/iconfont.js"></script>
@@ -69,7 +69,7 @@
             <i></i>
             <li><a href="index.php?act=clear_cache" class="clear" target="workspace" title="清除缓存">&nbsp;</a></li>
             <i></i>
-            <li><a href="privilege.php?act=logout" class="prompt" title="安全退出管理中心">&nbsp;</a></li>
+            <li><a href="javascript:exit(0);" class="prompt" title="安全退出管理中心">&nbsp;</a></li>
         </div>
     </div>
 </div>
@@ -213,14 +213,19 @@
             <div class="title"><i class="ac-font" nameCls="#icon-jibiequanxian"></i>权限管理 <span
                     class="fa fa-angle-right"></span></div>
             <div class="sub-menu" style="display: none">
-                <div target="${ctx}/admin/auth/user.shtml"><i class="ac-font" nameCls="#icon-jibiequanxian"></i>用户管理</div>
-                <div target="${ctx}/admin/auth/role.shtml"><i class="ac-font" nameCls="#icon-jibiequanxian"></i>角色管理</div>
-                <div target="${ctx}/admin/auth/res.shtml"><i class="ac-font" nameCls="#icon-jibiequanxian"></i>资源管理</div>
-                <div target="${ctx}/admin/auth/org.shtml"><i class="ac-font" nameCls="#icon-jibiequanxian"></i>组织管理</div>
+                <div target="${ctx}/admin/auth/user.shtml"><i class="ac-font" nameCls="#icon-jibiequanxian"></i>用户管理
+                </div>
+                <div target="${ctx}/admin/auth/role.shtml"><i class="ac-font" nameCls="#icon-jibiequanxian"></i>角色管理
+                </div>
+                <div target="${ctx}/admin/auth/res.shtml"><i class="ac-font" nameCls="#icon-jibiequanxian"></i>资源管理
+                </div>
+                <div target="${ctx}/admin/auth/org.shtml"><i class="ac-font" nameCls="#icon-jibiequanxian"></i>组织管理
+                </div>
             </div>
         </li>
         <li>
-            <div class="title" target="${ctx}/admin/session.shtml"><i class="ac-font" nameCls="#icon-shezhi"></i>会话管理</div>
+            <div class="title" target="${ctx}/admin/session.shtml"><i class="ac-font" nameCls="#icon-shezhi"></i>会话管理
+            </div>
         </li>
         <li>
             <div class="title" target="${ctx}/druid/" type="1"><i class="ac-font" nameCls="#icon-user-copy"></i>SQL监控
@@ -230,7 +235,8 @@
             <div class="title"><i class="ac-font" nameCls="#icon-shezhi"></i>任务管理</div>
         </li>
         <li>
-            <div class="title" target="${ctx}/admin/dict.shtml"><i class="ac-font" nameCls="#icon-shujuku"></i>字典管理</div>
+            <div class="title" target="${ctx}/admin/dict.shtml"><i class="ac-font" nameCls="#icon-shujuku"></i>字典管理
+            </div>
         </li>
         <li>
             <div class="title"><i class="ac-font" nameCls="#icon-rizhi"></i>日志管理 <span class="fa fa-angle-right"></span>
@@ -247,11 +253,19 @@
     <div class="title">商品 - 商品列表</div>
     <div class="content"></div>
 </div>
-<script type="text/javascript" src="http://ants-m.oss-cn-beijing.aliyuncs.com/js/ui.js"></script>
+<script type="text/javascript" src="http://ants-m.oss-cn-beijing.aliyuncs.com/auth/js/ui.js"></script>
 <script type="text/javascript" src="${ctx}/static/js/app.js"></script>
 <script type="text/javascript" src="${ctx}/static/js/jquery.form.js"></script>
 <script type="text/javascript">
     app.init({ctx: "${ctx}"});
+
+    function exit() {
+        confirm("您是否确定退出系统?", function () {
+            $.get("${ctx}/sys/exit", function (res) {
+                location.href = "${ctx}/login?JSESSIONID=" + res;
+            });
+        });
+    }
 </script>
 </body>
 </html>
