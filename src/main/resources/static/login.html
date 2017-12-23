@@ -9,7 +9,6 @@
     <link href="${ctx}/static/css/login.css" rel="stylesheet"/>
 </head>
 <body>
-<img src="http://ants-m.oss-cn-beijing.aliyuncs.com/auth/icon/account.svg" />
 <div class="login_box animated fadeInDown">
     <div class="owl-login">
         <div class="hand"></div>
@@ -27,15 +26,15 @@
         <div class="or">Ants</div>
     </div>
     <div style="position: relative;">
-        <i class="fa fa-lg fa-user-circle" style="position: absolute;left:38px;top:18px;"></i>
+        <img src="http://ants-m.oss-cn-beijing.aliyuncs.com/auth/icon/account.svg" style="position: absolute;left:38px;top:18px;"/>
         <input id="username" type="text" class="form-control" placeholder="Account" maxlength="20">
     </div>
     <div style="position: relative;">
-        <i class="fa fa-key" style="position: absolute;left:38px;top:18px;font-size:1.1em"></i>
+        <img src="http://ants-m.oss-cn-beijing.aliyuncs.com/auth/icon/password.svg" style="position: absolute;left:38px;top:18px;"/>
         <input id="password" type="password" class="form-control" placeholder="Password" maxlength="20">
     </div>
     <div style="position: relative;margin-top:-10px;">
-        <i class="fa fa-heart-o" aria-hidden="true" style="position: absolute;left:38px;top:20px;"></i>
+        <img src="http://ants-m.oss-cn-beijing.aliyuncs.com/auth/icon/vcode.svg" style="position: absolute;left:38px;top:18px;"/>
         <input id="code" type="text" class="form-control" style="width:70px;float:left;margin-right:18px;"
                maxlength="4">
         <img src="${ctx}/sys/code.png" class="code"/>
@@ -81,7 +80,7 @@
                 that.removeAttr("disabled");
                 that.css("opacity", "1");
             } else {
-                that.html('<i class="fa fa-spinner fa-pulse fa-fw"></i> 正在登录中');
+                that.html('<img src="http://ants-m.oss-cn-beijing.aliyuncs.com/auth/icon/btn-loading.svg"/> 正在登录中');
                 that.attr("disabled", "disabled");
                 that.css("opacity", ".2");
             }
