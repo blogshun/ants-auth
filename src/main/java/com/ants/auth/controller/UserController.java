@@ -147,8 +147,8 @@ public class UserController {
         boolean check = ImageUtil.check(txImg.getContentType());
         if (check) {
             long size = txImg.getSize();
-            if (size > 50000) {
-                return Json.fail("错误, 上传图片大小不能超过[50kb]!");
+            if (size > 200000) {
+                return Json.fail("错误, 上传图片大小不能超过[200kb]!");
             }
             String submittedFileName = txImg.getSubmittedFileName();
             String fileName = "tx" + System.currentTimeMillis() + submittedFileName.substring(submittedFileName.lastIndexOf("."), submittedFileName.length());

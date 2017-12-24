@@ -109,13 +109,15 @@ public class UserService {
         }
         if (type == 1) {
             Criteria criteria = db.createCriteria(UserRole.class);
+            criteria.and("userId", Condition.EQ, uid);
             criteria.label("role_id as roleId, r.role_name as roleName");
-            criteria.addRelation(Relation.lEFT, "sys_role", "r", "r.id", "role_id");
+            criteria.addRelation(Relation.lEFT, "sys_role", "r", "role_id", "r.id");
             return criteria.findList();
         } else if (type == 2) {
             Criteria criteria = db.createCriteria(UserOrg.class);
+            criteria.and("userId", Condition.EQ, uid);
             criteria.label("org_id as orgId, o.org_name as orgName");
-            criteria.addRelation(Relation.lEFT, "sys_org", "o", "o.id", "org_id");
+            criteria.addRelation(Relation.lEFT, "sys_org", "o", "org_id", "o.id");
             return criteria.findList();
         }
         return null;

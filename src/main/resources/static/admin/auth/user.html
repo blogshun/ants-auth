@@ -114,7 +114,7 @@
                 $("img.user_tx").attr("src", "${ctx}/static/images/tx.jpg");
             },
             showEditEvent: function (win, frm, res) {
-                $("img.user_tx").attr("src", "${ctx}/" + res.data.avatar);
+                $("img.user_tx").attr("src", res.data.avatar);
             },
             onSearchEvent: function () {
                 var tjKey = mini.get("tj").getValue();

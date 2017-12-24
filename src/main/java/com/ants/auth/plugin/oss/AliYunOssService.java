@@ -230,7 +230,6 @@ public class AliYunOssService implements InitializingBean {
             } else {
                 this.url = "http://".concat("{BUCKETNAME}.").concat(endpoint).concat("/");
             }
-
         }
     }
 }

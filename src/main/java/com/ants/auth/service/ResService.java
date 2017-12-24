@@ -1,12 +1,11 @@
 //package com.ants.auth.service;
 //
-//import com.acxy.ants.common.enums.DataSourceType;
-//import com.acxy.ants.core.annotation.Service;
-//import com.acxy.ants.core.annotation.Source;
-//import com.acxy.ants.core.exception.TipException;
-//import com.acxy.ants.core.plugin.db.Db;
-//import com.acxy.ants.core.plugin.entity.Symbol;
-//import com.acxy.auth.entity.Res;
+//
+//import com.ants.auth.entity.Res;
+//import com.ants.common.annotation.service.Service;
+//import com.ants.common.annotation.service.Source;
+//import com.ants.common.exception.TipException;
+//import com.ants.plugin.db.Db;
 //
 //import java.util.Date;
 //import java.util.List;
@@ -19,7 +18,7 @@
 //@Service
 //public class ResService {
 //
-//    @Source(DataSourceType.DRUID)
+//    @Source
 //    private Db db;
 //
 //    public List<Res> queryList(String tjKey, String keyValue) {
