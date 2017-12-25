@@ -12,6 +12,7 @@ import com.ants.common.exception.TipException;
 import com.ants.common.utils.FileUtil;
 import com.ants.common.utils.RegexUtil;
 import com.ants.common.utils.StrEncryptUtil;
+import com.ants.common.utils.StrUtil;
 import com.ants.plugin.db.Db;
 import com.ants.plugin.orm.Criteria;
 import com.ants.plugin.orm.enums.Condition;
@@ -39,11 +40,10 @@ public class UserService {
             Criteria criteria = db.createCriteria(User.class);
             if (filters != null) {
                 criteria.filters(filters);
-            } else {
-                criteria.orderBy(sortField, OrderBy.valueOf(sortOrder));
-                if (tjKey != null && keyValue != null) {
-                    criteria.and(tjKey, Condition.LIKE_CENTER, keyValue);
-                }
+            }
+            criteria.orderBy(sortField, OrderBy.valueOf(sortOrder));
+            if (StrUtil.notBlank(tjKey, keyValue)) {
+                criteria.and(tjKey, Condition.LIKE, "%".concat(keyValue).concat("%"));
             }
             return criteria.findPage(pageIndex, pageSize);
         } catch (Exception e) {
