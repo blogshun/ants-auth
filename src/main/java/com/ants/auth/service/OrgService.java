@@ -1,5 +1,6 @@
 package com.ants.auth.service;
 
+import com.alibaba.fastjson.JSON;
 import com.ants.auth.entity.Org;
 import com.ants.auth.entity.User;
 import com.ants.common.annotation.service.Service;
@@ -7,9 +8,12 @@ import com.ants.common.annotation.service.Source;
 import com.ants.common.bean.Log;
 import com.ants.common.bean.Page;
 import com.ants.common.exception.TipException;
+import com.ants.common.utils.StrUtil;
 import com.ants.plugin.db.Db;
 import com.ants.plugin.orm.Criteria;
+import com.ants.plugin.orm.enums.Condition;
 import com.ants.plugin.orm.enums.OrderBy;
+import com.ants.plugin.orm.enums.Relation;
 
 import java.util.Date;
 import java.util.List;
@@ -28,20 +32,21 @@ public class OrgService {
 
     public Page queryPage(Integer pageIndex, Integer pageSize, String filters) {
         User user = null;
-//        Criteria<Org> criteria = db.createCriteria(Org.class);
-//        try {
-//            if (filters != null) {
-//                criteria.filters(filters);
-//            } else
-//                user = new User();
-//            if (StrUtil.notBlank(user.getOrgs()))
-//                criteria.and("orgId", Condition.IN, user.getOrgs());
-//
-//        } catch (Exception e) {
-//            Log.error("conditional conversion error:{}", filters);
-//        }
-//        Page page = user.leftJoin("left join sys_user_org o on o.user_id = id").orderBy("create_time, id", Symbol.DESC).page(db, pageIndex, pageSize);
-        return null;
+        Criteria<User> criteria = db.createCriteria(User.class);
+        try {
+            if (filters != null) {
+                user = JSON.parseObject(filters, User.class);
+            }
+            criteria.addRelation(Relation.lEFT, "sys_user_org", "uo", "id", "uo.user_id");
+            criteria.groupBy("_.id");
+            criteria.orderBy("_.create_time, _.id", OrderBy.DESC);
+            if (user != null) {
+                criteria.and("uo.org_id", Condition.IN, user.getOrgs().split(","));
+            }
+        } catch (Exception e) {
+            Log.error("conditional conversion error:{}", filters);
+        }
+        return criteria.findPage(pageIndex, pageSize);
     }
 
     public List<Org> queryList(String filters) {

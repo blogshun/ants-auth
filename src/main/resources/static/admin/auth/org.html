@@ -127,7 +127,7 @@
 
     var r = {
         renderAvatar: function (e) {
-            return '<img src= "${ctx}/' + e.value + '" onerror="" class="avatar xz fl" />';
+            return `<img src= "` + e.value + `" onerror="this.src='${ctx}/static/images/tx.jpg'" class="avatar xz fl" />`;
         },
         renderSex: function (e) {
             if (e.value == 0)

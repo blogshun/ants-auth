@@ -33,7 +33,9 @@ public class RoleService {
 
     public Page queryPage(Integer pageIndex, Integer pageSize, String sortField, String sortOrder) {
         Criteria criteria = db.createCriteria(Role.class);
-        criteria.orderBy(sortField, OrderBy.valueOf(sortOrder));
+        if(StrUtil.notBlank(sortOrder)) {
+            criteria.orderBy(sortField, OrderBy.valueOf(sortOrder));
+        }
         return criteria.findPage(pageIndex, pageSize);
     }
 
