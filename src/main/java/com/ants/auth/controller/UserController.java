@@ -1,8 +1,6 @@
 package com.ants.auth.controller;
 
 import com.ants.auth.entity.User;
-import com.ants.auth.plugin.oss.AliYunOssService;
-import com.ants.auth.plugin.oss.OssResult;
 import com.ants.auth.service.UserService;
 import com.ants.common.annotation.action.Controller;
 import com.ants.common.annotation.action.GET;
@@ -11,6 +9,8 @@ import com.ants.common.annotation.action.Param;
 import com.ants.common.annotation.service.Autowired;
 import com.ants.common.bean.Page;
 import com.ants.common.utils.ImageUtil;
+import com.ants.core.context.AntsTool;
+import com.ants.plugin.oss.OssResult;
 import com.ants.restful.render.Json;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,8 +33,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private AliYunOssService ossService;
 
     /**
      * 获取用户列表
@@ -152,7 +150,7 @@ public class UserController {
             }
             String submittedFileName = txImg.getSubmittedFileName();
             String fileName = "tx" + System.currentTimeMillis() + submittedFileName.substring(submittedFileName.lastIndexOf("."), submittedFileName.length());
-            OssResult result = ossService.uploadStream2OSS(txImg.getInputStream(), fileName, "auth/upload/avatar/");
+            OssResult result = AntsTool.getAliOss().uploadStream2OSS(txImg.getInputStream(), fileName, "auth/upload/avatar/");
             return Json.success(result.getUrl());
         } else {
             return Json.fail("请选择jpg 或者 png 图片文件进行上传!");
