@@ -190,6 +190,7 @@
                     if (res.code == 0) {
                         $("img.user_tx").attr("src", res.data);
                         mini.get("avatar").setValue(res.data);
+                        tips.success("用户头像上传成功!");
                     } else
                         tips.error(res.message);
                 },

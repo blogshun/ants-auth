@@ -1,14 +1,19 @@
 package com.ants.auth.service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.ants.auth.common.SysConst;
 import com.ants.auth.entity.User;
 import com.ants.auth.vo.LoginVO;
+import com.ants.common.annotation.service.Autowired;
 import com.ants.common.annotation.service.Service;
 import com.ants.common.annotation.service.Source;
 import com.ants.common.enums.EncType;
 import com.ants.common.exception.TipException;
+import com.ants.common.utils.GenUtil;
 import com.ants.common.utils.StrEncryptUtil;
 import com.ants.core.holder.ClientHolder;
+import com.ants.plugin.cache.RedisTpl;
 import com.ants.plugin.db.Db;
 import com.ants.plugin.orm.Criteria;
 import com.ants.plugin.orm.enums.Condition;
@@ -26,6 +31,9 @@ public class SystemService {
     @Source
     private Db db;
 
+    @Autowired
+    private RedisTpl redisTpl;
+
     /**
      * 系统用户登录业务
      *
@@ -39,7 +47,7 @@ public class SystemService {
         }
         String password = loginVO.getPassword();
         String decryptStr = StrEncryptUtil.decrypt("_utravel12345678", EncType.AES, password);
-        if(decryptStr == null){
+        if (decryptStr == null) {
             return -2;
         }
         Criteria<User> criteria = db.createCriteria(User.class);
@@ -56,12 +64,41 @@ public class SystemService {
         if (user.getIsLock() == 1) {
             return -3;
         }
+
+        //TODO 查询用户组织信息
+
+        //TODO 查询用户资源信息
+
+        //TODO 查询用户角色信息
+
         //存放session
         ClientHolder.getSession().setAttribute(SysConst.USER_SESSION_NAME, user);
         //修改登录记录
         user.setLoginCount(user.getLoginCount() + 1);
         user.setLoginIp(ClientHolder.getIp());
         user.setLastLoginTime(new Date());
+
+        //存放redis
+        String userTokenStr = GenUtil.makeTokenStr(user.getId(), user.getAccount()
+                , user.getPassword()
+                , System.currentTimeMillis());
+        redisTpl.set(SysConst.REDIS_USER_INFO.concat(userTokenStr), JSON.toJSONString(user), 60 * 60 * 24 * 2);
+
+        //写入信息免登陆
+        ClientHolder.setCookie(SysConst.LOGIN_COOKIE_NAME, "true", 60 * 60 * 24 * 1);
+
+        //写入UserToken
+        ClientHolder.setCookie(SysConst.USER_TOKEN, userTokenStr, 60 * 60 * 24 * 1);
         return criteria.update(user);
+    }
+
+    /**
+     * 根据本地token查询用户信息
+     *
+     * @param userToken
+     * @return
+     */
+    public JSONObject findUserTokenByUser(String userToken) {
+        return redisTpl.get(SysConst.REDIS_USER_INFO.concat(userToken));
     }
 }

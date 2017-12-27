@@ -9,7 +9,7 @@ import com.ants.common.annotation.action.Param;
 import com.ants.common.annotation.service.Autowired;
 import com.ants.common.bean.Page;
 import com.ants.common.utils.ImageUtil;
-import com.ants.core.context.AntsTool;
+import com.ants.plugin.tool.AliOssTool;
 import com.ants.plugin.oss.OssResult;
 import com.ants.restful.render.Json;
 
@@ -141,7 +141,7 @@ public class UserController {
      * @return
      */
     @POST("/uploadAvatar")
-    public Object uploadAvatar(Part txImg, HttpServletRequest request) throws IOException {
+    public Object uploadAvatar(Part txImg) throws IOException {
         boolean check = ImageUtil.check(txImg.getContentType());
         if (check) {
             long size = txImg.getSize();
@@ -150,7 +150,7 @@ public class UserController {
             }
             String submittedFileName = txImg.getSubmittedFileName();
             String fileName = "tx" + System.currentTimeMillis() + submittedFileName.substring(submittedFileName.lastIndexOf("."), submittedFileName.length());
-            OssResult result = AntsTool.getAliOss().uploadStream2OSS(txImg.getInputStream(), fileName, "auth/upload/avatar/");
+            OssResult result = AliOssTool.getAliOss().uploadStream2OSS(txImg.getInputStream(), fileName, "auth/upload/avatar/");
             return Json.success(result.getUrl());
         } else {
             return Json.fail("请选择jpg 或者 png 图片文件进行上传!");

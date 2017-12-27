@@ -5,6 +5,7 @@ import com.ants.common.annotation.action.Controller;
 import com.ants.common.annotation.action.GET;
 import com.ants.common.annotation.action.PathVariable;
 import com.ants.common.annotation.boot.PropertyConfiguration;
+import com.ants.common.annotation.plugin.EnableRedisPlugin;
 import com.ants.common.annotation.service.Application;
 import com.ants.core.holder.ClientHolder;
 import com.ants.core.startup.JTomcat;
@@ -22,6 +23,7 @@ import java.io.IOException;
  */
 @Application
 @PropertyConfiguration(debug = true)
+@EnableRedisPlugin
 @Controller
 public class AuthApplication {
 

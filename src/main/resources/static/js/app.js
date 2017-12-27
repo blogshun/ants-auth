@@ -123,12 +123,16 @@ var app = {
                 var submenu = parent.find(".sub-menu");
                 if (submenu.hasClass("on")) {
                     submenu.slideUp().removeClass("on");
-                    if (submenu.length != 0) $(this).find("span").attr("class", "fa fa-angle-right");
+                    if (submenu.length != 0) {
+                        $(this).find("img").attr("src", "http://ants-m.oss-cn-beijing.aliyuncs.com/auth/icon/right.svg");
+                    }
                 } else {
                     $(".sub-menu.on").slideUp().removeClass("on");
                     submenu.slideDown().addClass("on");
-                    $(this).parents("ul").find("span.icon").attr("class", "fa fa-angle-right");
-                    if (submenu.length != 0) $(this).find("span").attr("class", "fa fa-angle-down");
+                    $(this).parents("ul").find("img").attr("src", "http://ants-m.oss-cn-beijing.aliyuncs.com/auth/icon/right.svg");
+                    if (submenu.length != 0) {
+                        $(this).find("img").attr("src", "http://ants-m.oss-cn-beijing.aliyuncs.com/auth/icon/down.svg");
+                    }
                 }
             }
         });
@@ -223,7 +227,7 @@ var app = {
         window['tips'] = {
             success: function (text) {
                 mini.showTips({
-                    content: "<i class='fa fa-check'></i>" + text,
+                    content: "<img src='http://ants-m.oss-cn-beijing.aliyuncs.com/auth/icon/ok.svg' style='vertical-align:middle;margin-top:-2px;'> " + text,
                     state: 'success',      //default|success|info|warning|danger
                     x: 'center',          //left|center|right
                     y: 'top'          //top|center|bottom
@@ -231,7 +235,7 @@ var app = {
             },
             error: function (text) {
                 mini.showTips({
-                    content: "<i class='fa fa-close'></i>" + text,
+                    content: "<img src='http://ants-m.oss-cn-beijing.aliyuncs.com/auth/icon/error.svg' style='vertical-align:middle;margin-top:-2px;'> " + text,
                     state: 'danger',      //default|success|info|warning|danger
                     x: 'center',          //left|center|right
                     y: 'top',          //top|center|bottom

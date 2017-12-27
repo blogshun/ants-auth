@@ -4560,7 +4560,7 @@ body .mini-pager-num {
     *zoom: 1;
     cursor: default;
     position: relative;
-    padding-left: 10px;
+    padding-left: 5px;
     padding-top: 5px;
     padding-bottom: 5px;
     padding-right: 10px;

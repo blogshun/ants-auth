@@ -1,11 +1,13 @@
 package com.ants.auth.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ants.auth.common.SysConst;
 import com.ants.auth.service.SystemService;
 import com.ants.auth.vo.LoginVO;
 import com.ants.common.annotation.action.Controller;
 import com.ants.common.annotation.action.GET;
 import com.ants.common.annotation.action.POST;
+import com.ants.common.annotation.action.PathVariable;
 import com.ants.common.annotation.service.Autowired;
 import com.ants.common.utils.VerifyCodeUtil;
 import com.ants.core.holder.ClientHolder;
@@ -44,9 +46,17 @@ public class SystemController {
         } else if (result == -3) {
             return Json.fail("登录失败, 该账号已被锁定请联系管理员!");
         }
-        //写入信息免登陆
-        ClientHolder.setCookie(SysConst.LOGIN_COOKIE_NAME, "true", 60*60*24*1);
         return Json.success("ok");
+    }
+
+    @GET("/user/info")
+    public Object getUserInfo(@PathVariable String userToken){
+        ClientHolder.getUserToken();
+        JSONObject result = systemService.findUserTokenByUser(userToken);
+        if(result == null){
+            return Json.fail(2000, "用户UserToken已过期!");
+        }
+        return Json.success(result);
     }
 
     /**
