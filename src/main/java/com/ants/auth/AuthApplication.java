@@ -22,7 +22,7 @@ import java.io.IOException;
  * @Date 2017-12-20
  */
 @Application
-@PropertyConfiguration(debug = true)
+@PropertyConfiguration(debug = true, secretKey = "ants_auth_666666")
 @EnableRedisPlugin
 @Controller
 public class AuthApplication {
@@ -84,7 +84,7 @@ public class AuthApplication {
     }
 
     @GET("/login")
-    public void login(@PathVariable String name) throws IOException {
+    public void login() throws IOException {
         Cookie cookie = ClientHolder.getCookie(SysConst.LOGIN_COOKIE_NAME);
         HttpServletRequest request = ClientHolder.getRequest();
         HttpServletResponse response = ClientHolder.getResponse();
