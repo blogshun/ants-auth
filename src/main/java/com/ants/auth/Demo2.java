@@ -59,13 +59,13 @@ public class Demo2 {
         builder.addField(tableFieldSpec);
         for (String filed : tableBean.getFields()) {
             FieldSpec fieldSpec = FieldSpec.builder(String.class, filed.toUpperCase(), Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-                    .initializer("$S", tableName.concat("_.").concat(filed))
+                    .initializer("$S", filed)
                     .build();
 
             builder.addField(fieldSpec);
 
             StringBuffer sb = new StringBuffer();
-            sb.append(tableName).append("_.").append(filed).append(" as ").append(StrCaseUtil.toCapital(filed, false));
+            sb.append(filed).append(" as ").append(StrCaseUtil.toCapital(filed, false));
             FieldSpec fieldAsSpec = FieldSpec.builder(String.class, "AS_".concat(filed.toUpperCase()), Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
                     .initializer("$S", sb.toString())
                     .build();
