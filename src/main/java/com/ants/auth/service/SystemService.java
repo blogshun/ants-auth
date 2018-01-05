@@ -90,7 +90,6 @@ public class SystemService {
         //存放redis
         String userTokenStr = GenUtil.makeTokenStr(userId, user.getAccount()
                 , user.getPassword());
-        System.out.println(JSON.toJSONString(user));
         Map userMap = JSON.parseObject(JSON.toJSONString(user), Map.class);
         //查询用户组织信息
         Criteria uoCriteria = db.createCriteria(UserOrg.class);
@@ -106,17 +105,17 @@ public class SystemService {
         urCriteria.label("r.id as roleId, r.role_name as roleName");
         urCriteria.addRelation(Relation.lEFT, "sys_user", "u", "user_id", "u.id");
         urCriteria.addRelation(Relation.lEFT, "sys_role", "r", "role_id", "r.id");
-        urCriteria.and("user_id", Condition.EQ, userId);
+        urCriteria.and("userId", Condition.EQ, userId);
         List<UserRole> urList = urCriteria.findList();
         userMap.put("roleList", urList);
         List resList = new ArrayList<>();
         //查询用户资源信息
         for (UserRole ur : urList) {
             Criteria rrCriteria = db.createCriteria(RoleRes.class);
-            urCriteria.label("re.id as resId, re.res_name as resName");
-            urCriteria.addRelation(Relation.lEFT, "sys_role", "ro", "role_id", "ro.id");
-            urCriteria.addRelation(Relation.lEFT, "sys_res", "re", "res_id", "re.id");
-            urCriteria.and("role_id", Condition.EQ, ur.getRoleId());
+            rrCriteria.label("re.id as resId, re.res_name as resName, re.url, re.icon, re.pid, re.type, re.ipx");
+            rrCriteria.addRelation(Relation.lEFT, "sys_role", "ro", "role_id", "ro.id");
+            rrCriteria.addRelation(Relation.lEFT, "sys_res", "re", "res_id", "re.id");
+            rrCriteria.and("role_id", Condition.EQ, ur.getRoleId());
             List<JsonMap> mapList = rrCriteria.findMapList();
             for (JsonMap jm : mapList) {
                 if (!resList.contains(jm)) {
