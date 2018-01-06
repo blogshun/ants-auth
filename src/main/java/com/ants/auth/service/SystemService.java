@@ -7,6 +7,7 @@ import com.ants.auth.entity.RoleRes;
 import com.ants.auth.entity.User;
 import com.ants.auth.entity.UserOrg;
 import com.ants.auth.entity.UserRole;
+import com.ants.auth.generate.*;
 import com.ants.auth.vo.LoginVO;
 import com.ants.common.annotation.service.Autowired;
 import com.ants.common.annotation.service.Service;
@@ -53,18 +54,18 @@ public class SystemService {
         if (code == null) {
             throw new TipException("验证码不能为空!");
         }
+        if (!code.equalsIgnoreCase(String.valueOf(sessionCode))) {
+            return -1;
+        }
         String password = loginVO.getPassword();
         String decryptStr = StrEncryptUtil.decrypt("_utravel12345678", EncType.AES, password);
         if (decryptStr == null) {
             return -2;
         }
         Criteria<User> criteria = db.createCriteria(User.class);
-        criteria.and("account", Condition.EQ, loginVO.getUserName())
-                .and("password", Condition.EQ, StrEncryptUtil.md5(decryptStr));
+        criteria.and(QUser.ACCOUNT, Condition.EQ, loginVO.getUserName())
+                .and(QUser.PASSWORD, Condition.EQ, StrEncryptUtil.md5(decryptStr));
         User user = criteria.find();
-        if (!code.equalsIgnoreCase(String.valueOf(sessionCode))) {
-            return -1;
-        }
         if (user == null) {
             return -2;
         }
@@ -93,29 +94,29 @@ public class SystemService {
         Map userMap = JSON.parseObject(JSON.toJSONString(user), Map.class);
         //查询用户组织信息
         Criteria uoCriteria = db.createCriteria(UserOrg.class);
-        uoCriteria.label("o.id as orgId, o.org_name as orgName");
-        uoCriteria.addRelation(Relation.lEFT, "sys_user", "u", "user_id", "u.id");
-        uoCriteria.addRelation(Relation.lEFT, "sys_org", "o", "org_id", "o.id");
-        uoCriteria.and("user_id", Condition.EQ, userId);
-        List uoList = uoCriteria.findList();
+        uoCriteria.label(QOrg._ID, QOrg._ORG_NAME);
+        uoCriteria.addRelation(Relation.lEFT, QUser.TABLE, QUserOrg.USER_ID, QUser._ID);
+        uoCriteria.addRelation(Relation.lEFT, QOrg.TABLE, QUserOrg.ORG_ID, QOrg._ID);
+        uoCriteria.and(QUserOrg.USER_ID, Condition.EQ, userId);
+        List uoList = uoCriteria.findMapList();
         userMap.put("orgList", uoList);
 
         //查询用户角色信息
         Criteria urCriteria = db.createCriteria(UserRole.class);
-        urCriteria.label("r.id as roleId, r.role_name as roleName");
-        urCriteria.addRelation(Relation.lEFT, "sys_user", "u", "user_id", "u.id");
-        urCriteria.addRelation(Relation.lEFT, "sys_role", "r", "role_id", "r.id");
-        urCriteria.and("userId", Condition.EQ, userId);
-        List<UserRole> urList = urCriteria.findList();
+        urCriteria.label(QRole._ID, QRole._ROLE_NAME);
+        urCriteria.addRelation(Relation.lEFT, QUser.TABLE, QUserRole.USER_ID, QUser._ID);
+        urCriteria.addRelation(Relation.lEFT, QRole.TABLE, QUserRole.ROLE_ID, QRole._ID);
+        urCriteria.and(QUserRole.USER_ID, Condition.EQ, userId);
+        List<JsonMap> urList = urCriteria.findMapList();
         userMap.put("roleList", urList);
         List resList = new ArrayList<>();
         //查询用户资源信息
-        for (UserRole ur : urList) {
+        for (JsonMap ur : urList) {
             Criteria rrCriteria = db.createCriteria(RoleRes.class);
-            rrCriteria.label("re.id as resId, re.res_name as resName, re.url, re.icon, re.pid, re.type, re.ipx");
-            rrCriteria.addRelation(Relation.lEFT, "sys_role", "ro", "role_id", "ro.id");
-            rrCriteria.addRelation(Relation.lEFT, "sys_res", "re", "res_id", "re.id");
-            rrCriteria.and("role_id", Condition.EQ, ur.getRoleId());
+            rrCriteria.label(QRes._ID, QRes._RES_NAME, QRes._URL, QRes._ICON, QRes._PID, QRes._TYPE, QRes._IPX);
+            rrCriteria.addRelation(Relation.lEFT, QRole.TABLE, QRoleRes.ROLE_ID, QRole._ID);
+            rrCriteria.addRelation(Relation.lEFT, QRes.TABLE, QRoleRes.RES_ID, QRes._ID);
+            rrCriteria.and(QRoleRes.ROLE_ID, Condition.EQ, ur.getInt("id"));
             List<JsonMap> mapList = rrCriteria.findMapList();
             for (JsonMap jm : mapList) {
                 if (!resList.contains(jm)) {

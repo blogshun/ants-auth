@@ -1,9 +1,9 @@
 package com.ants.auth.service;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.ants.auth.entity.Role;
 import com.ants.auth.entity.RoleRes;
+import com.ants.auth.generate.QRole;
+import com.ants.auth.generate.QRoleRes;
 import com.ants.common.annotation.service.Service;
 import com.ants.common.annotation.service.Source;
 import com.ants.common.annotation.service.Tx;
@@ -17,8 +17,6 @@ import com.ants.plugin.orm.enums.Condition;
 import com.ants.plugin.orm.enums.OrderBy;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @author MrShun
@@ -33,8 +31,8 @@ public class RoleService {
 
     public Page queryPage(Integer pageIndex, Integer pageSize, String sortField, String sortOrder) {
         Criteria criteria = db.createCriteria(Role.class);
-        if(StrUtil.notBlank(sortOrder)) {
-            criteria.orderBy(sortField, OrderBy.valueOf(sortOrder));
+        if (StrUtil.notBlank(sortOrder)) {
+            criteria.orderBy(OrderBy.valueOf(sortOrder), sortField);
         }
         return criteria.findPage(pageIndex, pageSize);
     }
@@ -49,7 +47,7 @@ public class RoleService {
         } catch (Exception e) {
             Log.error("conditional conversion error:{}", filters);
         }
-        criteria.orderBy("id", OrderBy.DESC);
+        criteria.orderBy(OrderBy.DESC, QRole.ID);
         return criteria.findList();
     }
 
@@ -114,7 +112,7 @@ public class RoleService {
             throw new TipException("ids 参数不能为空!");
         }
         Criteria criteria = db.createCriteria(RoleRes.class);
-        criteria.and("roleId", Condition.IN, ids);
+        criteria.and(QRoleRes.ROLE_ID, Condition.IN, ids);
         return criteria.findList();
     }
 }

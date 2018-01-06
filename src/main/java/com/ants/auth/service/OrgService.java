@@ -3,12 +3,14 @@ package com.ants.auth.service;
 import com.alibaba.fastjson.JSON;
 import com.ants.auth.entity.Org;
 import com.ants.auth.entity.User;
+import com.ants.auth.generate.QOrg;
+import com.ants.auth.generate.QUser;
+import com.ants.auth.generate.QUserOrg;
 import com.ants.common.annotation.service.Service;
 import com.ants.common.annotation.service.Source;
 import com.ants.common.bean.Log;
 import com.ants.common.bean.Page;
 import com.ants.common.exception.TipException;
-import com.ants.common.utils.StrUtil;
 import com.ants.plugin.db.Db;
 import com.ants.plugin.orm.Criteria;
 import com.ants.plugin.orm.enums.Condition;
@@ -37,11 +39,11 @@ public class OrgService {
             if (filters != null) {
                 user = JSON.parseObject(filters, User.class);
             }
-            criteria.addRelation(Relation.lEFT, "sys_user_org", "uo", "id", "uo.user_id");
-            criteria.groupBy("_.id");
-            criteria.orderBy("_.create_time, _.id", OrderBy.DESC);
+            criteria.addRelation(Relation.lEFT, QUserOrg.TABLE, QUser.ID, QUserOrg._USER_ID);
+            criteria.groupBy(QUser.ID);
+            criteria.orderBy(OrderBy.DESC, QUser.CREATE_TIME, QUser.ID);
             if (user != null) {
-                criteria.and("uo.org_id", Condition.IN, user.getOrgs().split(","));
+                criteria.and(QUserOrg._ORG_ID, Condition.IN, user.getOrgs().split(","));
             }
         } catch (Exception e) {
             Log.error("conditional conversion error:{}", filters);
@@ -58,7 +60,7 @@ public class OrgService {
         } catch (Exception e) {
             Log.error("conditional conversion error:{}", filters);
         }
-        criteria.orderBy("ipx,id", OrderBy.ASC);
+        criteria.orderBy(OrderBy.ASC, QOrg.IPX, QOrg.ID);
         return criteria.findList();
     }
 

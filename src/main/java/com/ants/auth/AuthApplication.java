@@ -13,6 +13,7 @@ import com.ants.core.holder.ClientHolder;
 import com.ants.core.startup.JTomcat;
 import com.ants.core.startup.assembly.FilterAssembly;
 import com.ants.core.startup.assembly.ServletAssembly;
+import com.ants.core.utils.CodeUtil;
 import com.ants.restful.render.Resource;
 
 import javax.servlet.http.Cookie;
@@ -105,6 +106,6 @@ public class AuthApplication {
     }
 
     public static void main(String[] args) {
-          JTomcat.run(AuthApplication.class, 80, "/auth");
+        JTomcat.run(AuthApplication.class, 80, "/auth");
     }
 }

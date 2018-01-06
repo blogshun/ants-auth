@@ -2,6 +2,7 @@ package com.ants.auth.service;
 
 
 import com.ants.auth.entity.Res;
+import com.ants.auth.generate.QRes;
 import com.ants.common.annotation.service.Service;
 import com.ants.common.annotation.service.Source;
 import com.ants.common.exception.TipException;
@@ -30,7 +31,7 @@ public class ResService {
         if (StrUtil.notBlank(tjKey, keyValue)) {
             criteria.and(tjKey, Condition.LIKE, "%".concat(keyValue).concat("%"));
         }
-        criteria.orderBy("ipx", OrderBy.ASC);
+        criteria.orderBy(OrderBy.ASC, QRes.IPX);
         return criteria.findList();
     }
 
