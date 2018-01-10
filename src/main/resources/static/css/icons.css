@@ -274,7 +274,11 @@
     height: 18px;
     background: url(icons/group_key.png) 0 0 no-repeat;
 }
-
+.icon-key {
+    width: 18px;
+    height: 18px;
+    background: url(icons/key.png) 0 0 no-repeat;
+}
 .icon-role-add {
     width: 18px;
     height: 18px;

@@ -1,22 +1,27 @@
 package cn.jants.auth.controller;
 
+import cn.jants.auth.common.SysConst;
+import cn.jants.auth.entity.User;
+import cn.jants.auth.generate.QUser;
 import cn.jants.auth.service.SystemService;
+import cn.jants.auth.service.UserService;
 import cn.jants.auth.vo.LoginVO;
 import cn.jants.common.annotation.action.Controller;
 import cn.jants.common.annotation.action.GET;
 import cn.jants.common.annotation.action.POST;
-import cn.jants.common.annotation.action.PathVariable;
+import cn.jants.common.annotation.action.Param;
 import cn.jants.common.annotation.service.Autowired;
 import cn.jants.common.utils.VerifyCodeUtil;
 import cn.jants.core.holder.ClientHolder;
-import com.alibaba.fastjson.JSONObject;
-import cn.jants.auth.common.SysConst;
+import cn.jants.plugin.cache.RedisTpl;
 import cn.jants.restful.render.Json;
+import com.alibaba.fastjson.JSONObject;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * 系统操作层
@@ -30,6 +35,12 @@ public class SystemController {
 
     @Autowired
     private SystemService systemService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private RedisTpl redisTpl;
 
     /**
      * 系统用户登录
@@ -49,12 +60,11 @@ public class SystemController {
         return Json.success("ok");
     }
 
-    @GET("/user/info")
-    public Object getUserInfo(@PathVariable String userToken){
-        ClientHolder.getUserToken();
+    @POST("/user/info")
+    public Object getUserInfo(@Param String userToken) {
         JSONObject result = systemService.findUserTokenByUser(userToken);
-        if(result == null){
-            return Json.fail(2000, "用户UserToken已过期!");
+        if (result == null) {
+            return Json.fail(2000, "用户UserToken不存在或已过期!");
         }
         return Json.success(result);
     }
@@ -90,5 +100,26 @@ public class SystemController {
     public Object exit() {
         ClientHolder.delCookie(SysConst.LOGIN_COOKIE_NAME);
         return ClientHolder.getSessionId();
+    }
+
+    /**
+     * 修改管理员头像
+     *
+     * @param userToken 用户信息token
+     * @param userId    用户ID
+     * @return
+     */
+    @POST("/updateUserAvatar")
+    public Object updateUserAvatar(@Param String userToken, @Param Long userId, @Param String avatarPath) {
+        User user = new User(userId);
+        user.setAvatar(avatarPath);
+        //重置用户信息
+        JSONObject userMap = redisTpl.get(SysConst.REDIS_USER_INFO.concat(userToken));
+        if(userMap == null){
+            return Json.fail(2000, "用户UserToken不存在或已过期!");
+        }
+        userMap.put(QUser.AVATAR, avatarPath);
+        redisTpl.set(SysConst.REDIS_USER_INFO.concat(userToken), userMap);
+        return Json.success(userService.updateUserInfo(user));
     }
 }

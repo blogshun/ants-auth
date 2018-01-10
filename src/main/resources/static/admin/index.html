@@ -31,27 +31,31 @@
             </dl>
 			<span class="avatar">
 				<form id="fileForm" method="post" enctype="multipart/form-data" runat="server">
-                    <input name="img" type="file" class="admin-avatar-file" id="_pic" title="设置管理员头像">
+                    <input name="txImg" type="file" class="admin-avatar-file" id="_pic" title="设置管理员头像">
                 </form>
-				<img nctype="admin_avatar" src="${ctx}/static/images/admin.png"/>
+				<img class="admin_avatar" src="${ctx}/static/images/admin.png"/>
 			</span>
             <i class="arrow" id="admin-manager-btn"></i>
             <div class="manager-menu">
                 <div class="title">
                     <h4>最后登录</h4>
-                    <a href="privilege.php?act=edit&id=41" target="workspace" class="edit_pwd">修改密码</a>
+                    <a id="uppass" href="javascript:;" class="edit_pwd">修改密码</a>
                 </div>
                 <div class="login-date">
-                    <strong>2017-02-18 16:29:22</strong>
-                    <span>(IP:127.0.0.1)</span>
+                    <strong id="lastLoginTime"></strong>
+                    <span>(IP:<span id="loginIp"></span>)</span>
                 </div>
                 <div class="title mt10">
-                    <h4>常用操作</h4>
-                    <a href="javascript:;" class="add_nav">添加菜单</a>
+                    <h4>我的组织</h4>
                 </div>
-                <div class="quick_link">
-                    <ul>
-                    </ul>
+                <div id="myOrgs" style="padding-top:5px;">
+
+                </div>
+                <div class="title mt10">
+                    <h4>我的角色</h4>
+                </div>
+                <div id="myRoles" style="padding-top:5px;">
+
                 </div>
             </div>
         </div>
@@ -115,14 +119,102 @@
     </ul>
 </div>
 <div class="warpper">
-    <div class="title">商品 - 商品列表</div>
+    <div class="title">主面板概览</div>
     <div class="content"></div>
 </div>
+<!-- 修改密码 -->
+<div id="updateUserPassWindow" title="修改密码" class="mini-window" style="width:200px;"
+     showModal="true" allowDrag="true" iconCls="icon-key"
+>
+    <div id="updateUserPassForm" class="form">
+        <table class="tbp">
+            <tr>
+                <td colspan="2">
+                    <div style="float: left;">
+                        <p>密 码 <input name="password" class="mini-password"
+                                      required="true" maxLength="30" style="width: 180px;"/></p>
+                        <p style="padding-top:8px;">确定密码 <input name="confirmPassword" class="mini-password" required="true" maxLength="30" style="width: 180px;"></p>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <div class="footer-btn" style="text-align:right">
+            <a id="uupOk" class="mini-button" iconCls="icon-ok">确定</a>
+            <a id="uupCancel" class="mini-button" iconCls="icon-cancel">取消</a>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="${ctx}/static/js/jquery.cookie.js"></script>
 <script type="text/javascript" src="http://ants-m.oss-cn-beijing.aliyuncs.com/auth/js/ui.js"></script>
 <script type="text/javascript" src="${ctx}/static/js/app.js"></script>
 <script type="text/javascript" src="${ctx}/static/js/jquery.form.js"></script>
 <script type="text/javascript">
     app.init({ctx: "${ctx}"});
+
+    $(function(){
+        mini.parse();
+        var userToken = $.cookie('USER_TOKEN');
+        if(userToken == null){
+            location.href = "${ctx}/login";
+        }else{
+            $.post("${ctx}/sys/user/info", {userToken:userToken}, function(res){
+                if(res.code == 0){
+                    window.user = res.data;
+                    //设置头像
+                    $("img.admin_avatar").attr("src", res.data.avatar);
+                    //设置登录时间
+                    $("strong#lastLoginTime").text(user.lastLoginTime);
+                    //设置登录Ip
+                    $("span#loginIp").text(user.loginIp);
+                    //设置组织
+                    $.each(user.orgList, function(i, obj){
+                        $("div#myOrgs").append("<span style='margin-right:8px;'>"+obj.orgName+"</span>");
+                    });
+                    //设置组织
+                    $.each(user.roleList, function(i, obj){
+                        $("div#myRoles").append("<span style='margin-right:8px;'>"+obj.roleName+"</span> ");
+                    });
+                }else{
+                    tips.error(res.message);
+                }
+            });
+        }
+        var win = mini.get("updateUserPassWindow");
+        var frm = new mini.Form("updateUserPassForm");
+        //显示用户密码对话框
+        $("#uppass").on("click", function(){
+            frm.clear();
+            win.show();
+        });
+        //确定修改密码
+        $("a#uupOk").click(function () {
+            frm.validate();
+            if (frm.isValid() == false) return;
+            var data = frm.getData();
+            if(data.password != data.confirmPassword){
+                tips.error("两次密码输入不一致!");
+                return;
+            }
+            $.post("${ctx}/user/updatePass", {id:user.id, password:data.password}, function(res){
+                if (res.code == 0) {
+                    win.hide();
+                    tips.success("密码修改成功, 正在跳转重新登录 ...");
+                    //重新登录
+                    setTimeout(function(){
+                        $.get("${ctx}/sys/exit", function (res) {
+                            location.href = "${ctx}/login?JSESSIONID=" + res;
+                        });
+                    }, 2000);
+                } else
+                    tips.error(res.message);
+            });
+        });
+        //关闭窗口
+        $("a#uupCancel").click(function () {
+            win.hide();
+        });
+
+    });
 
     function exit() {
         confirm("您是否确定退出系统?", function () {

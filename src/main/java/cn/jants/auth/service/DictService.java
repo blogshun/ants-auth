@@ -1,14 +1,15 @@
 package cn.jants.auth.service;
 
-import cn.jants.plugin.orm.Criteria;
+import cn.jants.auth.entity.Dict;
+import cn.jants.auth.generate.QDict;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import cn.jants.auth.entity.Dict;
 import cn.jants.common.annotation.service.Service;
 import cn.jants.common.annotation.service.Source;
 import cn.jants.common.exception.TipException;
 import cn.jants.common.utils.StrUtil;
 import cn.jants.plugin.db.Db;
+import cn.jants.plugin.orm.Criteria;
 import cn.jants.plugin.orm.enums.Condition;
 import cn.jants.plugin.orm.enums.OrderBy;
 
@@ -30,7 +31,7 @@ public class DictService {
 
     public List<Dict> queryList(String filters) {
         Criteria<Dict> criteria = db.createCriteria(Dict.class);
-        if(StrUtil.notBlank(filters)) {
+        if (StrUtil.notBlank(filters)) {
             JSONObject jsonObject = JSON.parseObject(filters);
             Set<Map.Entry<String, Object>> entries = jsonObject.entrySet();
             for (Map.Entry<String, Object> entry : entries) {
@@ -40,7 +41,7 @@ public class DictService {
                 }
             }
         }
-        criteria.orderBy("ipx,id", OrderBy.DESC);
+        criteria.orderBy(OrderBy.DESC, QDict.IPX, QDict.ID);
         return criteria.findList();
     }
 
@@ -67,10 +68,10 @@ public class DictService {
         int id = dict.getId();
         //先查询是否存在相同的CODE
         Criteria<Dict> criteria = db.createCriteria(Dict.class);
-        criteria.and("code", Condition.EQ, code);
-        criteria.and("id", Condition.NE, id);
+        criteria.and(QDict.CODE, Condition.EQ, code);
+        criteria.and(QDict.ID, Condition.NE, id);
         Integer count = criteria.count();
-        if(count > 0){
+        if (count > 0) {
             return -1;
         }
         //先查询是否为系统字典
@@ -104,9 +105,9 @@ public class DictService {
             throw new TipException("id 参数不能为空!");
         }
         Criteria criteria = db.createCriteria(Dict.class);
-        criteria.label("name, val");
+        criteria.label(QDict.NAME, QDict.VAL);
         criteria.and("pid = (select id from sys_dict where code = ?)", Condition.EMBED, id);
-        criteria.orderBy("ipx", OrderBy.ASC);
+        criteria.orderBy(OrderBy.ASC, QDict.IPX);
         return criteria.findList();
     }
 }

@@ -1,13 +1,13 @@
 package cn.jants.auth.controller;
 
-import cn.jants.auth.entity.RoleRes;
-import cn.jants.common.annotation.action.GET;
-import cn.jants.common.annotation.action.POST;
-import cn.jants.common.annotation.service.Autowired;
 import cn.jants.auth.entity.Role;
+import cn.jants.auth.entity.RoleRes;
 import cn.jants.auth.service.RoleService;
 import cn.jants.common.annotation.action.Controller;
+import cn.jants.common.annotation.action.GET;
+import cn.jants.common.annotation.action.POST;
 import cn.jants.common.annotation.action.Param;
+import cn.jants.common.annotation.service.Autowired;
 import cn.jants.common.bean.Page;
 import cn.jants.restful.render.Json;
 

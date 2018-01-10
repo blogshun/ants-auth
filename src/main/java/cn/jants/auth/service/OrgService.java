@@ -1,18 +1,21 @@
 package cn.jants.auth.service;
 
-import cn.jants.plugin.orm.Criteria;
-import cn.jants.plugin.orm.enums.Relation;
 import com.alibaba.fastjson.JSON;
 import cn.jants.auth.entity.Org;
 import cn.jants.auth.entity.User;
+import cn.jants.auth.generate.QOrg;
+import cn.jants.auth.generate.QUser;
+import cn.jants.auth.generate.QUserOrg;
 import cn.jants.common.annotation.service.Service;
 import cn.jants.common.annotation.service.Source;
 import cn.jants.common.bean.Log;
 import cn.jants.common.bean.Page;
 import cn.jants.common.exception.TipException;
 import cn.jants.plugin.db.Db;
+import cn.jants.plugin.orm.Criteria;
 import cn.jants.plugin.orm.enums.Condition;
 import cn.jants.plugin.orm.enums.OrderBy;
+import cn.jants.plugin.orm.enums.Relation;
 
 import java.util.Date;
 import java.util.List;
@@ -36,11 +39,11 @@ public class OrgService {
             if (filters != null) {
                 user = JSON.parseObject(filters, User.class);
             }
-            criteria.addRelation(Relation.lEFT, "sys_user_org", "uo", "id", "uo.user_id");
-            criteria.groupBy("_.id");
-            criteria.orderBy("_.create_time, _.id", OrderBy.DESC);
+            criteria.addRelation(Relation.lEFT, QUserOrg.TABLE, QUser.ID, QUserOrg._USER_ID);
+            criteria.groupBy(QUser.ID);
+            criteria.orderBy(OrderBy.DESC, QUser.CREATE_TIME, QUser.ID);
             if (user != null) {
-                criteria.and("uo.org_id", Condition.IN, user.getOrgs().split(","));
+                criteria.and(QUserOrg._ORG_ID, Condition.IN, user.getOrgs().split(","));
             }
         } catch (Exception e) {
             Log.error("conditional conversion error:{}", filters);
@@ -57,7 +60,7 @@ public class OrgService {
         } catch (Exception e) {
             Log.error("conditional conversion error:{}", filters);
         }
-        criteria.orderBy("ipx,id", OrderBy.ASC);
+        criteria.orderBy(OrderBy.ASC, QOrg.IPX, QOrg.ID);
         return criteria.findList();
     }
 

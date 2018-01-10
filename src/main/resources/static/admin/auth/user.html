@@ -6,6 +6,7 @@
                 <a id="add" class="mini-button" iconCls="icon-user-add">增加</a>
                 <a id="edit" class="mini-button" iconCls="icon-user-edit">编辑</a>
                 <a id="remove" class="mini-button" iconCls="icon-user-delete">删除</a>
+                <a id="repass" class="mini-button" iconCls="icon-key">重置密码</a>
                 <span class="separator"></span>
                 <a class="btn-default btn_see" xtype="1" data-placement="bottomleft"><i class="sc_icon sc_icon_see"></i>查看角色</a>
                 <a class="btn-default btn_edit" xtype="2" data-placement="bottomleft"><i class="icon icon-edit"></i>查看组织</a></a>
@@ -44,6 +45,29 @@
         <div field="loginIp" width="115">上次登录IP</div>
         <div field="lastLoginTime" width="115">上次登录时间</div>
         <div width="70" renderer="r.renderTime">[更新信息]</div>
+    </div>
+</div>
+
+<!-- 修改密码 -->
+<div id="resetUserPassWindow" title="重置密码" class="mini-window" style="width:200px;"
+     showModal="true" allowDrag="true" iconCls="icon-key"
+>
+    <div id="resetUserPassForm" class="form">
+        <table class="tbp">
+            <tr>
+                <td colspan="2">
+                    <div style="float: left;">
+                        <p>密 码 <input name="password" class="mini-password"
+                                                            required="true" maxLength="30" style="width: 180px;"/></p>
+                        <p style="padding-top:8px;">确定密码 <input name="confirmPassword" class="mini-password" required="true" maxLength="30" style="width: 180px;"></p>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <div class="footer-btn" style="text-align:right">
+            <a id="repOk" class="mini-button" iconCls="icon-ok">确定</a>
+            <a id="repCancel" class="mini-button" iconCls="icon-cancel">取消</a>
+        </div>
     </div>
 </div>
 
@@ -196,6 +220,41 @@
                 },
                 async: true
             });
+        });
+
+        var win = mini.get("resetUserPassWindow");
+        var frm = new mini.Form("resetUserPassForm");
+        //显示用户密码对话框
+        $("#czpass").on("click", function(){
+            var rows = grid.getSelecteds();
+            if (rows.length != 1)
+                tips.error("请选着一条记录进行密码重置");
+            else {
+                frm.clear();
+                win.show();
+            }
+        });
+        //确定修改密码
+        $("a#repOk").click(function () {
+            frm.validate();
+            if (frm.isValid() == false) return;
+            var data = frm.getData();
+            if(data.password != data.confirmPassword){
+                tips.error("两次密码输入不一致!");
+                return;
+            }
+            var row = grid.getSelecteds();
+            $.post("${ctx}/user/updatePass", {id:row[0].id, password:data.password}, function(res){
+                if (res.code == 0) {
+                    win.hide();
+                    tips.success("密码重置成功!");
+                } else
+                    tips.error(res.message);
+            });
+        });
+        //关闭窗口
+        $("a#repCancel").click(function () {
+            win.hide();
         });
     }
 

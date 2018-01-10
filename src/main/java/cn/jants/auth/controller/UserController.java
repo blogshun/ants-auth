@@ -1,16 +1,17 @@
 package cn.jants.auth.controller;
 
 import cn.jants.auth.entity.User;
+import cn.jants.auth.service.UserService;
 import cn.jants.common.annotation.action.Controller;
 import cn.jants.common.annotation.action.GET;
 import cn.jants.common.annotation.action.POST;
+import cn.jants.common.annotation.action.Param;
 import cn.jants.common.annotation.service.Autowired;
+import cn.jants.common.bean.Page;
 import cn.jants.common.utils.ImageUtil;
+import cn.jants.common.utils.StrEncryptUtil;
 import cn.jants.plugin.oss.OssResult;
 import cn.jants.plugin.tool.AliOssTool;
-import cn.jants.auth.service.UserService;
-import cn.jants.common.annotation.action.Param;
-import cn.jants.common.bean.Page;
 import cn.jants.restful.render.Json;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,7 +33,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
 
     /**
      * 获取用户列表
@@ -155,6 +155,20 @@ public class UserController {
         } else {
             return Json.fail("请选择jpg 或者 png 图片文件进行上传!");
         }
+    }
+
+    /**
+     * 修改用户密码
+     *
+     * @param id       用户ID
+     * @param password 密码
+     * @return
+     */
+    @POST("/updatePass")
+    public Object updatePass(@Param Long id, @Param String password) {
+        User user = new User(id);
+        user.setPassword(StrEncryptUtil.md5(password));
+        return Json.success(userService.updateUserInfo(user));
     }
 
 }

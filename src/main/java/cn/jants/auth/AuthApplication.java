@@ -1,5 +1,6 @@
 package cn.jants.auth;
 
+import cn.jants.auth.common.SysConst;
 import cn.jants.common.annotation.action.Controller;
 import cn.jants.common.annotation.action.GET;
 import cn.jants.common.annotation.action.PathVariable;
@@ -9,7 +10,6 @@ import cn.jants.common.annotation.service.Application;
 import cn.jants.core.holder.ClientHolder;
 import cn.jants.core.startup.JTomcat;
 import cn.jants.restful.render.Resource;
-import cn.jants.auth.common.SysConst;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -97,6 +97,6 @@ public class AuthApplication {
     }
 
     public static void main(String[] args) {
-          JTomcat.run(AuthApplication.class, 80, "/auth");
+        JTomcat.run(AuthApplication.class, 80, "/auth");
     }
 }

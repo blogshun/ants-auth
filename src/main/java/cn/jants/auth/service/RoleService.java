@@ -1,18 +1,20 @@
 package cn.jants.auth.service;
 
+import cn.jants.auth.entity.Role;
 import cn.jants.auth.entity.RoleRes;
+import cn.jants.auth.generate.QRole;
+import cn.jants.auth.generate.QRoleRes;
 import cn.jants.common.annotation.service.Service;
 import cn.jants.common.annotation.service.Source;
 import cn.jants.common.annotation.service.Tx;
 import cn.jants.common.bean.Log;
+import cn.jants.common.bean.Page;
 import cn.jants.common.exception.TipException;
 import cn.jants.common.utils.StrUtil;
 import cn.jants.plugin.db.Db;
 import cn.jants.plugin.orm.Criteria;
 import cn.jants.plugin.orm.enums.Condition;
 import cn.jants.plugin.orm.enums.OrderBy;
-import cn.jants.auth.entity.Role;
-import cn.jants.common.bean.Page;
 
 import java.util.List;
 
@@ -29,8 +31,8 @@ public class RoleService {
 
     public Page queryPage(Integer pageIndex, Integer pageSize, String sortField, String sortOrder) {
         Criteria criteria = db.createCriteria(Role.class);
-        if(StrUtil.notBlank(sortOrder)) {
-            criteria.orderBy(sortField, OrderBy.valueOf(sortOrder));
+        if (StrUtil.notBlank(sortOrder)) {
+            criteria.orderBy(OrderBy.valueOf(sortOrder), sortField);
         }
         return criteria.findPage(pageIndex, pageSize);
     }
@@ -45,7 +47,7 @@ public class RoleService {
         } catch (Exception e) {
             Log.error("conditional conversion error:{}", filters);
         }
-        criteria.orderBy("id", OrderBy.DESC);
+        criteria.orderBy(OrderBy.DESC, QRole.ID);
         return criteria.findList();
     }
 
@@ -110,7 +112,7 @@ public class RoleService {
             throw new TipException("ids 参数不能为空!");
         }
         Criteria criteria = db.createCriteria(RoleRes.class);
-        criteria.and("roleId", Condition.IN, ids);
+        criteria.and(QRoleRes.ROLE_ID, Condition.IN, ids);
         return criteria.findList();
     }
 }

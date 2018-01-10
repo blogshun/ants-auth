@@ -1,13 +1,14 @@
 package cn.jants.auth.service;
 
 
-import cn.jants.plugin.orm.Criteria;
 import cn.jants.auth.entity.Res;
+import cn.jants.auth.generate.QRes;
 import cn.jants.common.annotation.service.Service;
 import cn.jants.common.annotation.service.Source;
 import cn.jants.common.exception.TipException;
 import cn.jants.common.utils.StrUtil;
 import cn.jants.plugin.db.Db;
+import cn.jants.plugin.orm.Criteria;
 import cn.jants.plugin.orm.enums.Condition;
 import cn.jants.plugin.orm.enums.OrderBy;
 
@@ -30,7 +31,7 @@ public class ResService {
         if (StrUtil.notBlank(tjKey, keyValue)) {
             criteria.and(tjKey, Condition.LIKE, "%".concat(keyValue).concat("%"));
         }
-        criteria.orderBy("ipx", OrderBy.ASC);
+        criteria.orderBy(OrderBy.ASC, QRes.IPX);
         return criteria.findList();
     }
 

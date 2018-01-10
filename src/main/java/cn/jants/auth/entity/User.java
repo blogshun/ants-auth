@@ -1,11 +1,11 @@
 package cn.jants.auth.entity;
 
 
+import com.alibaba.fastjson.annotation.JSONField;
 import cn.jants.common.annotation.action.Entity;
 import cn.jants.plugin.orm.Column;
 import cn.jants.plugin.orm.Id;
 import cn.jants.plugin.orm.Table;
-import com.alibaba.fastjson.annotation.JSONField;
 
 import java.io.Serializable;
 

@@ -3,21 +3,22 @@ package cn.jants.auth.service;
 import cn.jants.auth.entity.User;
 import cn.jants.auth.entity.UserOrg;
 import cn.jants.auth.entity.UserRole;
+import cn.jants.auth.generate.*;
 import cn.jants.common.annotation.service.Service;
 import cn.jants.common.annotation.service.Source;
 import cn.jants.common.annotation.service.Tx;
 import cn.jants.common.bean.Log;
+import cn.jants.common.bean.Page;
 import cn.jants.common.exception.TipException;
 import cn.jants.common.utils.FileUtil;
 import cn.jants.common.utils.RegexUtil;
+import cn.jants.common.utils.StrEncryptUtil;
 import cn.jants.common.utils.StrUtil;
 import cn.jants.plugin.db.Db;
 import cn.jants.plugin.orm.Criteria;
 import cn.jants.plugin.orm.enums.Condition;
 import cn.jants.plugin.orm.enums.OrderBy;
 import cn.jants.plugin.orm.enums.Relation;
-import cn.jants.common.bean.Page;
-import cn.jants.common.utils.StrEncryptUtil;
 
 import java.io.File;
 import java.util.Date;
@@ -34,14 +35,13 @@ public class UserService {
     @Source
     private Db db;
 
-
     public Page queryPage(Integer pageIndex, Integer pageSize, String sortField, String sortOrder, String filters, String tjKey, String keyValue) {
         try {
             Criteria criteria = db.createCriteria(User.class);
             if (filters != null) {
                 criteria.filters(filters);
             }
-            criteria.orderBy(sortField, OrderBy.valueOf(sortOrder));
+            criteria.orderBy(OrderBy.valueOf(sortOrder), sortField);
             if (StrUtil.notBlank(tjKey, keyValue)) {
                 criteria.and(tjKey, Condition.LIKE, "%".concat(keyValue).concat("%"));
             }
@@ -64,7 +64,7 @@ public class UserService {
         User user = criteria.findById(id);
         //填充用户角色信息
         Criteria urCriteria = db.createCriteria(UserRole.class);
-        urCriteria.and("userId", Condition.EQ, id);
+        urCriteria.and(QUserRole.USER_ID, Condition.EQ, id);
         List<UserRole> userRoles = urCriteria.findList();
         String rolesStr = "", orgsStr = "";
         if (userRoles != null && userRoles.size() != 0) {
@@ -81,7 +81,7 @@ public class UserService {
 
         //查询填充用户组织信息
         Criteria uoCriteria = db.createCriteria(UserOrg.class);
-        uoCriteria.and("userId", Condition.EQ, id);
+        uoCriteria.and(QUserOrg.USER_ID, Condition.EQ, id);
         List<UserOrg> userOrgs = uoCriteria.findList();
         if (userOrgs != null && userOrgs.size() != 0) {
             int len = userOrgs.size();
@@ -109,15 +109,15 @@ public class UserService {
         }
         if (type == 1) {
             Criteria criteria = db.createCriteria(UserRole.class);
-            criteria.and("userId", Condition.EQ, uid);
-            criteria.label("role_id as roleId, r.role_name as roleName");
-            criteria.addRelation(Relation.lEFT, "sys_role", "r", "role_id", "r.id");
+            criteria.and(QUserRole.USER_ID, Condition.EQ, uid);
+            criteria.label(QRole._ID, QRole._ROLE_NAME);
+            criteria.addRelation(Relation.lEFT, QRole.TABLE, QUserRole.ROLE_ID, QRole._ID);
             return criteria.findList();
         } else if (type == 2) {
             Criteria criteria = db.createCriteria(UserOrg.class);
-            criteria.and("userId", Condition.EQ, uid);
-            criteria.label("org_id as orgId, o.org_name as orgName");
-            criteria.addRelation(Relation.lEFT, "sys_org", "o", "org_id", "o.id");
+            criteria.and(QUserOrg.USER_ID, Condition.EQ, uid);
+            criteria.label(QOrg._ID, QOrg._ORG_NAME);
+            criteria.addRelation(Relation.lEFT, QOrg.TABLE, QUserOrg.ORG_ID, QOrg._ID);
             return criteria.findList();
         }
         return null;
@@ -133,7 +133,7 @@ public class UserService {
             throw new TipException("用户必须是英文字母+数字+下划线组成!");
         }
         Criteria criteria = db.createCriteria(User.class);
-        criteria.and("account", Condition.EQ, account);
+        criteria.and(QUser.ACCOUNT, Condition.EQ, account);
         Integer count = criteria.count();
         if (count > 0) {
             return -1;
@@ -169,8 +169,8 @@ public class UserService {
             throw new TipException("用户必须是英文字母+数字+下划线组成!");
         }
         Criteria criteria = db.createCriteria(User.class);
-        criteria.and("account", Condition.EQ, account);
-        criteria.and("id", Condition.NE, uid);
+        criteria.and(QUser.ACCOUNT, Condition.EQ, account);
+        criteria.and(QUser.ID, Condition.NE, uid);
         Integer count = criteria.count();
         if (count > 0) {
             return -1;
@@ -188,6 +188,22 @@ public class UserService {
     }
 
     /**
+     * 修改用户信息
+     *
+     * @param user 用户对象
+     * @return
+     */
+    public int updateUserInfo(User user) {
+        Long uid = user.getId();
+        if (uid == null) {
+            throw new TipException("用户ID不能为空!");
+        }
+        Criteria criteria = db.createCriteria(User.class);
+        criteria.and(QUser.ID, Condition.EQ, uid);
+        return criteria.update(user);
+    }
+
+    /**
      * 删除用户并且删除用户头像
      *
      * @param ids
@@ -201,7 +217,7 @@ public class UserService {
         }
         int res = 0;
         Criteria<User> criteria = db.createCriteria(User.class);
-        criteria.label("avatar");
+        criteria.label(QUser.AVATAR);
         for (Long id : ids) {
             //只查询用户头像信息
             User u = criteria.findById(id);
@@ -236,7 +252,7 @@ public class UserService {
         }
         //清空用户对应角色
         Criteria criteria = db.createCriteria(UserRole.class);
-        criteria.and("userId", Condition.EQ, uid);
+        criteria.and(QUserRole.USER_ID, Condition.EQ, uid);
         criteria.delete();
         if ("".equals(roles.trim())) {
             return;
@@ -263,7 +279,7 @@ public class UserService {
         }
         //清空用户对应组织
         Criteria criteria = db.createCriteria(UserOrg.class);
-        criteria.and("userId", Condition.EQ, uid);
+        criteria.and(QUserOrg.USER_ID, Condition.EQ, uid);
         criteria.delete();
         if ("".equals(orgs.trim())) {
             return;
