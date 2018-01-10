@@ -46,7 +46,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>com.ants.auth.AuthApplication</mainClass>
+                            <mainClass>cn.jants.auth.AuthApplication</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
