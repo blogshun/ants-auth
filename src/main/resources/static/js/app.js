@@ -42,10 +42,17 @@ var app = {
                 data: {"action": "TemporaryImage"},
                 success: function (res) {
                     if (res.code == 0) {
-                        alert(res.data);
-                        //$(".avatar img").attr("src", data.content);
+                        var avatarPath = res.data;
+                        $(".avatar img").attr("src", avatarPath);
+                        $.post(that.config.ctx + "/sys/updateUserAvatar", {userToken: $.cookie('USER_TOKEN'), userId: user.id, avatarPath: avatarPath}, function(res){
+                            if (res.code == 0) {
+                                tips.success("头像更新成功!");
+                            }else{
+                                tips.error(res.message);
+                            }
+                        });
                     } else
-                        alert(res.message);
+                        tips.error(res.message);
                 },
                 async: true
             });
@@ -55,7 +62,7 @@ var app = {
         //顶部管理员信息展开
         var adminSetup = function () {
             var hoverTimer, outTimer;
-            $('#admin-manager-btn,.manager-menu,.admincp-map').mouseenter(function () {
+            $('.admin-header-right .manager').mouseenter(function () {
                 clearTimeout(outTimer);
                 hoverTimer = setTimeout(function () {
                     $('.manager-menu').show();
@@ -63,7 +70,7 @@ var app = {
                 }, 200);
             });
 
-            $('#admin-manager-btn,.manager-menu,.admincp-map').mouseleave(function () {
+            $('.admin-header-right .manager').mouseleave(function () {
                 clearTimeout(hoverTimer);
                 outTimer = setTimeout(function () {
                     $('.manager-menu').hide();
@@ -327,7 +334,7 @@ var app = {
         $("a#remove").click(function () {
             var rows = grid.getSelecteds();
             if (rows.length == 0)
-                alert("请选着一条记录进行删除");
+                tips.error("请选着一条记录进行删除");
             else {
                 confirm("您是否确定需要删除该条记录", function () {
                     var ids = [];
