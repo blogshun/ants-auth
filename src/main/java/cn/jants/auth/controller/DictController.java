@@ -74,4 +74,17 @@ public class DictController {
         }
         return Json.success(res);
     }
+
+
+    /**
+     * POST GET 对应前端AJAX type
+     *
+     * @param content 对应Ajax data里面的content属性
+     * @return 对应ajax success:function(res){} 中的res
+     */
+    @POST("/file/create")
+    public Object create(String content){
+        //TODO 创建文件业务
+        return "ok";
+    }
 }
