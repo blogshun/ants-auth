@@ -7,6 +7,7 @@ import cn.jants.common.annotation.action.PathVariable;
 import cn.jants.common.annotation.boot.PropertyConfiguration;
 import cn.jants.common.annotation.plugin.EnableRedisPlugin;
 import cn.jants.common.annotation.service.Application;
+import cn.jants.core.context.AppConfiguration;
 import cn.jants.core.holder.ClientHolder;
 import cn.jants.core.startup.JTomcat;
 import cn.jants.restful.render.Resource;
@@ -22,10 +23,10 @@ import java.io.IOException;
  * @Date 2017-12-20
  */
 @Application
-@PropertyConfiguration(debug = true, secretKey = "ants_auth_666666")
+@PropertyConfiguration(debug = true, secretKey = "ants_auth_666666", domain = "http://localhost")
 @EnableRedisPlugin
 @Controller
-public class AuthApplication {
+public class AuthApplication{
 
 
     /**
@@ -97,6 +98,6 @@ public class AuthApplication {
     }
 
     public static void main(String[] args) {
-        JTomcat.run(AuthApplication.class, 80, "/auth");
+        JTomcat.run(AuthApplication.class, 8080, "/auth");
     }
 }
